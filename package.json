@@ -1,0 +1,32 @@
+{
+  "name": "uk-72-ui",
+  "version": "0.0.1",
+  "description": "React SPA for UK72",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "browserify -t [ babelify --presets [ react ] ] src/index.js -o bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/davidtron/uk-72-ui.git"
+  },
+  "keywords": [
+    "uk",
+    "resilience"
+  ],
+  "author": "David Parry",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/davidtron/uk-72-ui/issues"
+  },
+  "homepage": "https://github.com/davidtron/uk-72-ui#readme",
+  "dependencies": {
+    "babel-preset-react": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "watchify": "^3.6.1"
+  }
+}
