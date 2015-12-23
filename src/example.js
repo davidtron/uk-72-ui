@@ -3,24 +3,84 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 
-var ExampleApplication = React.createClass({
-    render: function() {
-        var elapsed = Math.round(this.props.elapsed  / 100);
-        var seconds = elapsed / 10 + (elapsed % 10 ? '' : '.0' );
-        var message =
-            'React has been successfully running for ' + seconds + ' seconds.';
 
-            return <p>{message}</p>;
+var CommentList = React.createClass({
+    render: function() {
+        var commentNodes = this.props.data.map(function(comment) {
+            return (
+                <Comment author={comment.author} key={comment.id}>
+                    {comment.text}
+                </Comment>
+            );
+        });
+        return (
+            <div className="commentList">
+                {commentNodes}
+            </div>
+        );
     }
 });
 
-var start = new Date().getTime();
+var CommentForm = React.createClass({
+    render: function() {
+        return (
+            <div className="commentForm">
+                Hello, world! I am a CommentForm.
+            </div>
+        );
+    }
+});
 
-setInterval(function() {
-    ReactDOM.render(
-    <ExampleApplication elapsed={new Date().getTime() - start} />,
-        document.getElementById('container')
-    );
-}, 50);
 
-module.exports = ExampleApplication;
+
+
+
+var Comment = React.createClass({
+    render: function() {
+        return (
+            <div className="comment">
+                <h2 className="commentAuthor">
+                    {this.props.author}
+                </h2>
+                {this.props.children}
+            </div>
+        );
+    }
+});
+
+
+var CommentBox = React.createClass({
+    loadCommentsFromServer: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                this.setState({data: data});
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.error(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    getInitialState: function() {
+        return {data: []};
+    },
+    componentDidMount: function() {
+        this.loadCommentsFromServer();
+        //setInterval(this.loadCommentsFromServer, this.props.pollInterval);
+    },
+    render: function() {
+        return (
+            <div className="commentBox">
+                <h1>Comments</h1>
+                <CommentList data={this.state.data} />
+                <CommentForm />
+            </div>
+        );
+    }
+});
+
+
+
+module.exports = CommentBox;
