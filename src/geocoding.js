@@ -6,9 +6,10 @@ require('whatwg-fetch')
  * Handles converting addresses and location coordinates into an object with a valid uk postcode and coordinates
  */
 export default class Geocoding {
-    constructor(geo = new google.maps.Geocoder()) {
-        // Default to google geocoder
+    constructor(geo = new google.maps.Geocoder(), ok = google.maps.GeocoderStatus.OK) {
+        // Default to google values so we can unit test without them
         this.geocoder = geo
+        this.ok = ok
         this.processGoogleGeocodeResults = this.processGoogleGeocodeResults.bind(this)
     }
 
@@ -19,9 +20,10 @@ export default class Geocoding {
 
     // Google geocode an address. May or may not return full postcode
     geocodeAddress(address) {
+        const statusOK = this.ok
         return new Promise((resolve, reject) => {
-            this.geocoder.geocode({'address': address}, function(results, status) {
-                if (status === google.maps.GeocoderStatus.OK) {
+            this.geocoder.geocode({'address': address}, (results, status) => {
+                if (status === statusOK) {
                     resolve(results)
                 } else {
                     reject(status)

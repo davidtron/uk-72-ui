@@ -20,14 +20,10 @@ export default class PostcodeForm extends Component {
 
     let geocoding = new Geocoding()
     geocoding.processAddress(address)
-      .then(res => console.log('processed address to',res))
+      .then(res => this.props.onPostcodeSubmit(res))
       .catch(err => console.log(err.toString()))
 
-    // First use a google geocoder to try and convert the address into a postcode and coords
-    // If geocoder does not have a postcode we take the coords google gave us and pass them into
-
-    //this.props.onPostcodeSubmit({ postcode: postcode })
-    //this.refs.address.value = ''
+    this.refs.address.value = ''
     return
   }
 

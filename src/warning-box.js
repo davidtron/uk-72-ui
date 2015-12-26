@@ -92,12 +92,17 @@ export default class WarningBox extends Component {
     }
 
 
-    handlePostcodeSubmit(comment) {
-        console.log('in the right place')
-        const comments = this.state.warnings
-        const newComments = comments.concat([comment])
+    handlePostcodeSubmit(locationAndPostcode) {
 
-        this.setState({warnings: newComments})
+        this.selectLocation(locationAndPostcode.location)
+
+        // Now submit the postcode / and or locations and process the data
+
+        console.log('in the right place')
+        //const comments = this.state.warnings
+        //const newComments = comments.concat([comment])
+
+        //this.setState({warnings: newComments})
 
         //fetch(this.props.url, {
         //  method: 'post',
