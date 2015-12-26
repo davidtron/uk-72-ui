@@ -12,6 +12,9 @@ React based ui for UK72
 ---
 
 
+We need coords and we need postcode at the warning box
+
+
 
 1. Do a geocode to get the post code from coords
     - use googles geocoder and or use 
