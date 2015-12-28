@@ -40,11 +40,11 @@ export default class WeatherWarning {
 
                     // TODO - this should not rely on google maps use a different lib for poly work
                     // Convert polygon into a google polygon
-                    const googleCoordsOfWarning = warning.coord.map(coordinate => {
+                    const weatherWarningPolygon = warning.coord.map(coordinate => {
                         return { lat: coordinate.latitude, lng: coordinate.longitude }
                     })
 
-                    const poly = new google.maps.Polygon({paths: googleCoordsOfWarning})
+                    const poly = new google.maps.Polygon({paths: weatherWarningPolygon})
                     const center = poly.my_getBounds().getCenter()
 
                     // Check if our coords are within it
@@ -52,7 +52,7 @@ export default class WeatherWarning {
                         warnings.push({
                             text: warning.warningText,
                             location: { lat: center.lat(), lng: center.lng()},
-                            polygon: googleCoordsOfWarning,
+                            polygons: [weatherWarningPolygon],
                             type: warning.weather,
                             validFrom: warning.validFrom,
                             validTo: warning.validTo,

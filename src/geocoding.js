@@ -83,7 +83,6 @@ export default class Geocoding {
     }
 
     getPostcodeFromResults(results) {
-        console.log('get from results')
         for (var i = 0; i < results.length; i++) {
             for (var j = 0; j < results[i].address_components.length; j++) {
                 for (var k = 0; k < results[i].address_components[j].types.length; k++) {

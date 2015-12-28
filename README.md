@@ -18,3 +18,5 @@ TODOs
 
 * error handling (if you type an address as just 109 mildred avenue (without ,watford)
 
+
+* Might be worth considering just passing the array we push warnings into around, that way we can do a lot of parallel loading?

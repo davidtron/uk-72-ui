@@ -16,14 +16,27 @@ export default class SimpleMapPage extends Component {
         if (props.mapOptions.panTo) {
             map.panTo(props.mapOptions.panTo)
         }
+
+        // If we wanted to add geojson directly we could do it here if we could load it without CORS
+        //console.log(map)
+        //map.props.map.data.loadGeoJson('http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon');
+        //
+        ////map.props.map.data.addGeoJson(data);
+        //map.props.map.data.setStyle(function (feature) {
+        //    return {
+        //        fillColor: '#0099ff',
+        //        strokeWeight: 2,
+        //        fillOpacity: 0.35
+        //    };
+        //});
     }
 
     polygonOptionsFor(warning) {
         let fill = '#0099ff'
-        if(warning.warningLevel) {
+        if (warning.warningLevel) {
             // Met office levels
             let warnLevel = warning.warningLevel.toUpperCase()
-            switch(warnLevel) {
+            switch (warnLevel) {
                 case 'YELLOW':
                     fill = '#ffff66'
                     break;
@@ -38,7 +51,7 @@ export default class SimpleMapPage extends Component {
             }
         }
 
-       return  {
+        return {
             strokeColor: '#000000',
             strokeOpacity: 0.0,
             strokeWeight: 1,
@@ -48,7 +61,7 @@ export default class SimpleMapPage extends Component {
     }
 
     polygonClick(warning) {
-        console.log(warning.text.substring(0,10))
+        //console.log(warning.text.substring(0, 10))
     }
 
     render() {
@@ -64,11 +77,15 @@ export default class SimpleMapPage extends Component {
      >
      {  // Display any polygons
         this.props.warnings.map((warning, index) => {
-            if(warning.polygon) {
-               return <Polygon paths={warning.polygon} options={this.polygonOptionsFor(warning)} onClick={this.polygonClick(warning)} />
+            if(warning.polygons) {
+               return warning.polygons.map((polygon, index) => {
+                 return <Polygon paths={polygon} options={this.polygonOptionsFor(warning)} onClick={this.polygonClick(warning)} />
+               })
             }
         })
      }
+
+
 
     </GoogleMap>
   }

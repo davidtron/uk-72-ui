@@ -6,6 +6,7 @@ import WarningList from './warning-list'
 import PostcodeForm from './postcode-form'
 import SimpleMapPage from './map'
 import WeatherWarning from './weather-warning'
+import FloodWarning from './flood-warning'
 import Geocoding from './geocoding'
 
 
@@ -23,9 +24,11 @@ export default class WarningBox extends Component {
 
         this.geocoding = new Geocoding()
         this.weatherWarning = new WeatherWarning()
+        this.floodWarning = new FloodWarning()
 
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
         this.selectLocation = this.selectLocation.bind(this)
+        this.moveMap = this.moveMap.bind(this)
     }
 
     loadWarnings() {
@@ -43,15 +46,22 @@ export default class WarningBox extends Component {
             .then(warnings => this.appendWarnings(warnings))
             .catch(err => console.error(err))
 
+        this.floodWarning.getWarning(this.state.currentLocation)
+            .then(warnings => this.appendWarnings(warnings))
+            .catch(err => console.error(err))
+
     }
 
-    appendWarnings(warnings) {
-        const oldMarkers = this.state.warnings;
-        const markers = update(oldMarkers, {
-            $push: warnings
-        });
+    appendWarnings(newWarnings) {
+        console.log('appending warnings', newWarnings.length)
+        if(newWarnings && newWarnings.length > 0) {
+            const oldMarkers = this.state.warnings;
+            const markers = update(oldMarkers, {
+                $push: newWarnings
+            });
 
-        this.setState({warnings: markers})
+            this.setState({warnings: markers})
+        }
     }
 
     componentDidMount () {
@@ -64,14 +74,24 @@ export default class WarningBox extends Component {
             .catch(err => console.error(err))
     }
 
-    selectLocation(location) {
+    moveMap(location) {
+
+
+
         this.setState({
             mapOptions: {
                 zoom: 17,
-                panTo: location.location
-            },
+                panTo: location
+            }
+        });
+    }
+
+    selectLocation(location) {
+        console.log('trying to set location', location)
+        this.setState({
             currentLocation: location
         });
+        this.moveMap(location.location)
     }
 
 
@@ -88,7 +108,7 @@ export default class WarningBox extends Component {
         return (
             <div className='comment-box'>
                 <h1>Warnings</h1>
-                <WarningList warnings={this.state.warnings} onWarningClick={this.selectLocation}/>
+                <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
 
                 <div style={mapHeight}><SimpleMapPage mapOptions={this.state.mapOptions} warnings={this.state.warnings}/></div>
