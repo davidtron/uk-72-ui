@@ -1,6 +1,7 @@
 'use strict'
 
 require('whatwg-fetch')
+import { default as canUseDOM } from "can-use-dom"
 
 /**
  * Handles converting addresses and location coordinates into an object with a valid uk postcode and coordinates
@@ -16,6 +17,19 @@ export default class Geocoding {
     processAddress(address) {
         return this.geocodeAddress(address)
             .then(this.processGoogleGeocodeResults)
+    }
+
+    getLocationAndPostcodeFromGeolocation() {
+        return new Promise((resolve, reject) => {
+            if(canUseDOM && navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(resolve, reject)
+            } else {
+                reject('Your browser doesnt support geolocation')
+            }
+        }).then(position => {
+            return this.getPostcodeFromLocation({ lat: position.coords.latitude, lng: position.coords.longitude })
+        })
+
     }
 
     // Google geocode an address. May or may not return full postcode
@@ -57,7 +71,6 @@ export default class Geocoding {
     }
 
     getPostcodeFromLocation(location) {
-        console.log('getPostcodeFromLocation', location)
         return fetch('https://api.postcodes.io/postcodes?lon=' + location.lng + '&lat=' + location.lat + '&limit=1')
             .then(response => response.json())
             .then(data => {

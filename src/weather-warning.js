@@ -26,8 +26,8 @@ export default class WeatherWarning {
         }
     }
 
-
     getWarning(location) {
+        console.log('Get weather warnings for ', location)
 
         return this.getWeatherData()
             .then(weather => {
@@ -47,7 +47,6 @@ export default class WeatherWarning {
                     const poly = new google.maps.Polygon({paths: googleCoordsOfWarning})
                     const center = poly.my_getBounds().getCenter()
 
-
                     // Check if our coords are within it
                     //if(google.maps.geometry.poly.containsLocation(location.location, poly)) {
                         warnings.push({
@@ -60,7 +59,8 @@ export default class WeatherWarning {
                             warningClass: warning.warningClass,
                             warningImpact: warning.warningImpact,
                             warningLevel: warning.warningLevel,
-                            warningLikelihood: warning.warningLikelihood
+                            warningLikelihood: warning.warningLikelihood,
+                            key: warning.id
                         })
                     //}
 

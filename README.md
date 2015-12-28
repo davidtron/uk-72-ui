@@ -1,23 +1,20 @@
 # uk-72-ui
-React based ui for UK72
+React based SPA for UK72
 
 
-  warning-box.js
-    map.js
-    postcode-form.js
-    warning-list.js
-      warning.js
+TODOs
 
+* Retrieve flood warnings and cache
+* Retrieve power outages for postcode
+* Decide how to display polygons. 
+    Should we just check if the currentPosition is within a warning region and display, 
+    or do we want to display all the polys we have for the UK (probably slow)
 
----
-
-
-
-
-1. Retrieve weather warnings and cache
+* Design common warning API for the list
+* Layout of warnings
+    When we click on warning expan for more information and link back to the source data
     
-2. Retrieve flood warnings and cache
-3. Retrieve power outages for 
+* When clicking on a warning we use the center of the bounding box, but also need to set zoom to show whole area
 
+* error handling (if you type an address as just 109 mildred avenue (without ,watford)
 
-3. Design common warning API for the list

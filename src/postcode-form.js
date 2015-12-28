@@ -8,6 +8,7 @@ export default class PostcodeForm extends Component {
   constructor(props) {
     super(props)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.geocoding = new Geocoding()
   }
 
   handleSubmit (e) {
@@ -18,8 +19,7 @@ export default class PostcodeForm extends Component {
       return
     }
 
-    let geocoding = new Geocoding()
-    geocoding.processAddress(address)
+    this.geocoding.processAddress(address)
       .then(res => this.props.onPostcodeSubmit(res))
       .catch(err => console.log(err.toString()))
 

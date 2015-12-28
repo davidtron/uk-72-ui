@@ -5,18 +5,9 @@ import {default as update} from "react-addons-update";
 import WarningList from './warning-list'
 import PostcodeForm from './postcode-form'
 import SimpleMapPage from './map'
-import { default as canUseDOM } from "can-use-dom"
 import WeatherWarning from './weather-warning'
+import Geocoding from './geocoding'
 
-require('whatwg-fetch')
-
-const geolocation = (
-    canUseDOM && navigator.geolocation || {
-        getCurrentPosition: (success, failure) => {
-            failure("Your browser doesn't support geolocation.")
-        }
-    }
-);
 
 export default class WarningBox extends Component {
     constructor(props) {
@@ -30,6 +21,7 @@ export default class WarningBox extends Component {
             }
         }
 
+        this.geocoding = new Geocoding()
         this.weatherWarning = new WeatherWarning()
 
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
@@ -46,50 +38,37 @@ export default class WarningBox extends Component {
         this.setState({ warnings: d})
 
 
-        // Look at spreading the
+        // Look at spreading the promise to run in parallel
         this.weatherWarning.getWarning(this.state.currentLocation)
-            .then(warnings => {
-
-                const oldMarkers = this.state.warnings;
-                const markers = update(oldMarkers, {
-                    $push: warnings
-                });
-
-                this.setState({ warnings: markers})
-            })
+            .then(warnings => this.appendWarnings(warnings))
             .catch(err => console.error(err))
 
     }
 
-    componentDidMount () {
-
-        // Convert to a promise and do the load on resolution
-        geolocation.getCurrentPosition((position) => {
-            this.setState({
-                mapOptions: {
-                    zoom: 15,
-                    panTo: {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    }
-                }
-            });
-
-            // TODO - get the postcode for this location and call selectLocation instead of the above
-
-        }, (reason) => {
-            console.log(reason);
+    appendWarnings(warnings) {
+        const oldMarkers = this.state.warnings;
+        const markers = update(oldMarkers, {
+            $push: warnings
         });
 
+        this.setState({warnings: markers})
+    }
 
-        this.loadWarnings();
+    componentDidMount () {
+
+        this.geocoding.getLocationAndPostcodeFromGeolocation()
+            .then(position => {
+                this.selectLocation(position)
+                this.loadWarnings()
+            })
+            .catch(err => console.error(err))
     }
 
     selectLocation(location) {
         this.setState({
             mapOptions: {
                 zoom: 17,
-                panTo: location
+                panTo: location.location
             },
             currentLocation: location
         });
@@ -97,16 +76,14 @@ export default class WarningBox extends Component {
 
 
     handlePostcodeSubmit(locationAndPostcode) {
-        this.selectLocation(locationAndPostcode.location)
+        this.selectLocation(locationAndPostcode)
         this.loadWarnings()
     }
-
 
     render() {
         const mapHeight = {
             height: 250
         }
-
 
         return (
             <div className='comment-box'>
