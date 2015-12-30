@@ -10,8 +10,9 @@ TODOs
     
 * Filter the list based on where you have searched for
 
-* Retrieve flood warnings and cache.
-    * Flood zones could be downloaded and served separately.
+* Retrieve flood warnings and cache - too big
+    * Need to retrieve and cache a small set of ones that are within the visible bounds and at a certain zoom level
+    
     
 * Retrieve power outages for postcode
 

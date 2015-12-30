@@ -2,7 +2,6 @@
 
 require('whatwg-fetch')
 import lscache from 'lscache'
-import proxify from 'proxify-url'
 
 
 export default class FloodWarning {
@@ -116,11 +115,4 @@ export default class FloodWarning {
                     })
             })
     }
-}
-
-
-google.maps.Polygon.prototype.my_getBounds=function(){
-    var bounds = new google.maps.LatLngBounds()
-    this.getPath().forEach(function(element,index){bounds.extend(element)})
-    return bounds
 }
