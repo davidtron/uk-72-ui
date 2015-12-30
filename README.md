@@ -4,11 +4,17 @@ React based SPA for UK72
 
 TODOs
 
-* Retrieve flood warnings and cache
-* Retrieve power outages for postcode
 * Decide how to display polygons. 
     Should we just check if the currentPosition is within a warning region and display, 
     or do we want to display all the polys we have for the UK (probably slow)
+    
+* Filter the list based on where you have searched for
+
+* Retrieve flood warnings and cache.
+    * Flood zones could be downloaded and served separately.
+    
+* Retrieve power outages for postcode
+
 
 * Design common warning API for the list
 * Layout of warnings

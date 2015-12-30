@@ -29,22 +29,20 @@ export default class FloodWarning {
             }
 
             if(!floodPolygon) {
-                // Since the polygon part of the API is not CORS enabled. WHY?
-                // we have to proxy via Yahoo YQL which mangles the response
-                // hence all this horrendous object graph
 
-                let v = proxify(flood.floodArea.polygon)
+
+                let v = flood.floodArea.polygon
                 console.log('looking for ' + floodAreaID , v)
                 const floodPolyPromise = fetch(v)
                     .then(response => response.json())
                     .then(polygonData => {
-
-                        let geo = polygonData.query.results.json.features[0].geometry
+                        console.log('got ', polygonData)
+                        let geo = polygonData.features[0].geometry
                         if(geo.type === 'MultiPolygon') {
-                            let floodPolygonsForAreaID = geo.coordinates.map((polygons, index) => {
+                            let floodPolygonsForAreaID = geo.coordinates[0].map((polygons, index) => {
 
-                                return polygons.json['0'].json.map((geoJSONCoords, index) => {
-                                    return { lat: geoJSONCoords.json[1], lng: geoJSONCoords.json[0]}
+                                return polygons.map((geoJSONCoords, index) => {
+                                    return { lat: geoJSONCoords[1], lng: geoJSONCoords[0]}
                                 })
                             })
                             console.log('cached as '+floodAreaID, floodPolygonsForAreaID)

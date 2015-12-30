@@ -75,13 +75,10 @@ export default class WarningBox extends Component {
     }
 
     moveMap(location) {
-
-
-
         this.setState({
             mapOptions: {
-                zoom: 17,
-                panTo: location
+                panTo: location,
+                zoom: 15
             }
         });
     }
@@ -102,16 +99,17 @@ export default class WarningBox extends Component {
 
     render() {
         const mapHeight = {
-            height: 250
+            height: 400
         }
 
         return (
-            <div className='comment-box'>
-                <h1>Warnings</h1>
-                <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
-                <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
-
-                <div style={mapHeight}><SimpleMapPage mapOptions={this.state.mapOptions} warnings={this.state.warnings}/></div>
+            <div className='comment-box row'>
+                <div className='col-md-4 warning-list'>
+                    <h1>Warnings</h1>
+                    <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
+                    <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
+                </div>
+                <div className='col-md-8' style={mapHeight}><SimpleMapPage mapOptions={this.state.mapOptions} warnings={this.state.warnings}/></div>
             </div>
         )
     }

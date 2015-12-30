@@ -17,8 +17,8 @@ export default class SimpleMapPage extends Component {
             map.panTo(props.mapOptions.panTo)
         }
 
-        // If we wanted to add geojson directly we could do it here if we could load it without CORS
-        //console.log(map)
+        // If we wanted to add geojson directly we could do it here
+        //console.log('http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon')
         //map.props.map.data.loadGeoJson('http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon');
         //
         ////map.props.map.data.addGeoJson(data);

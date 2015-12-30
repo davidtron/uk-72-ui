@@ -26,7 +26,6 @@
   "dependencies": {
     "can-use-dom": "^0.1.0",
     "lscache": "^1.0.5",
-    "proxify-url": "^1.0.0",
     "react": "^0.14.3",
     "react-addons-update": "^0.14.3",
     "react-dom": "^0.14.3",
