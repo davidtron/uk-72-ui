@@ -7,7 +7,9 @@ import PostcodeForm from './postcode-form'
 import SimpleMapPage from './map'
 import WeatherWarning from './weather-warning'
 import FloodWarning from './flood-warning'
+import PowerWarning from './power-warning'
 import Geocoding from './geocoding'
+import PostcodeToPes from './postcode-to-pes'
 
 
 export default class WarningBox extends Component {
@@ -25,6 +27,8 @@ export default class WarningBox extends Component {
         this.geocoding = new Geocoding()
         this.weatherWarning = new WeatherWarning()
         this.floodWarning = new FloodWarning()
+        this.powerWarning = new PowerWarning()
+        this.postcodeToPes = new PostcodeToPes()
 
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
         this.selectLocation = this.selectLocation.bind(this)
@@ -33,22 +37,23 @@ export default class WarningBox extends Component {
 
     loadWarnings() {
 
-        // Dummy for layout - TODO - remove
-        let d = [
-            {text: 'warning 1', type: 'weather', location : { lat: 51.6538367, lng: -0.4145852}},
-            {text: 'warning 2', type: 'power', location : { lat: 51.4272403, lng: -3.1891529} }
-        ]
-        this.setState({ warnings: d})
+        this.setState({ warnings: []})
 
 
         // Look at spreading the promise to run in parallel
-        this.weatherWarning.getWarning(this.state.currentLocation)
-            .then(warnings => this.appendWarnings(warnings))
-            .catch(err => console.error(err))
+        //this.weatherWarning.getWarning(this.state.currentLocation)
+        //    .then(warnings => this.appendWarnings(warnings))
+        //    .catch(err => console.error(err))
 
-        this.floodWarning.getWarning(this.state.currentLocation)
-            .then(warnings => this.appendWarnings(warnings))
-            .catch(err => console.error(err))
+        //this.floodWarning.getWarning(this.state.currentLocation)
+        //    .then(warnings => this.appendWarnings(warnings))
+        //    .catch(err => console.error(err))
+
+        //this.powerWarning.getWarning(this.state.currentLocation)
+        //    .then(warnings => this.appendWarnings(warnings))
+        //    .catch(err => console.error(err))
+
+        this.postcodeToPes.lookupPes()
 
     }
 

@@ -7,7 +7,8 @@
     "start": "parallelshell \"npm run -s watch\" ",
     "watch": "watchify src/index.js -dv -t babelify -o dist/bundle.js",
     "build": "NODE_ENV=production browserify src/index.js -t babelify -g uglifyify -o dist/bundle.js",
-    "test": "standard --verbose | snazzy"
+    "test": "NODE_ENV=dev browserify test/*.js -t babelify -o dist/test.js && node dist/test.js",
+    "standard": "standard --verbose | snazzy"
   },
   "repository": {
     "type": "git",

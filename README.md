@@ -4,9 +4,15 @@ React based SPA for UK72
 
 TODOs
 
+* Look at getting the bounds of the map box and zoom level
+
+* Look at generating the bounding boxes for all regions (download and process offline) - see how big the file is
+
 * Decide how to display polygons. 
     Should we just check if the currentPosition is within a warning region and display, 
     or do we want to display all the polys we have for the UK (probably slow)
+    
+* Style the list items    
     
 * Filter the list based on where you have searched for
 
