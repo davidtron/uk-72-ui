@@ -81,12 +81,10 @@ export default class PowerWarning {
                         const distance = geolib.getDistance(location.location, outage)
                         if (distance < distanceToYourLocation) {
 
-                            const boundingBox = this.createBoundingBox(outage, 5000)
-
                             const warning = {
                                 text: outage.info,
                                 location: {lat: outage.latitude, lng: outage.longitude},
-                                polygons: [this.createBoundingBox(boundingBox)],
+                                polygons: [this.createBoundingPolygon(outage, 50)],
                                 type: 'power cut',
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,
@@ -105,16 +103,8 @@ export default class PowerWarning {
             })
     }
 
-    //createPolygonFromBoundingBox(boundingBox) {
-    //    return [
-    //        {lat: boundingBox[0], lng: boundingBox[1]},
-    //        {lat: boundingBox[0], lng: boundingBox[3]},
-    //        {lat: boundingBox[2], lng: boundingBox[3]},
-    //        {lat: boundingBox[2], lng: boundingBox[1]},
-    //    ]
-    //}
 
-    createBoundingBox(outage, distance) {
+    createBoundingPolygon(outage, distance) {
 
         const latitude = outage.latitude;
         const longitude = outage.longitude;
