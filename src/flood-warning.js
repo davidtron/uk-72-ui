@@ -49,7 +49,7 @@ export default class FloodWarning {
                             this.inMemory[floodAreaID] = floodPolygonsForAreaID;
                             return floodPolygonsForAreaID
                         } else {
-                            // Handle non MultiPolygon
+                            // TODO Handle non MultiPolygon
                             throw new Error('unknown type of geojson data  for '+floodAreaID + geo.type)
                         }
                     })

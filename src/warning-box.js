@@ -9,7 +9,6 @@ import WeatherWarning from './weather-warning'
 import FloodWarning from './flood-warning'
 import PowerWarning from './power-warning'
 import Geocoding from './geocoding'
-import PostcodeToPes from './postcode-to-pes'
 
 
 export default class WarningBox extends Component {
@@ -28,7 +27,6 @@ export default class WarningBox extends Component {
         this.weatherWarning = new WeatherWarning()
         this.floodWarning = new FloodWarning()
         this.powerWarning = new PowerWarning()
-        this.postcodeToPes = new PostcodeToPes()
 
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
         this.selectLocation = this.selectLocation.bind(this)
@@ -41,24 +39,25 @@ export default class WarningBox extends Component {
 
 
         // Look at spreading the promise to run in parallel
-        //this.weatherWarning.getWarning(this.state.currentLocation)
-        //    .then(warnings => this.appendWarnings(warnings))
-        //    .catch(err => console.error(err))
+        this.weatherWarning.getWarning(this.state.currentLocation)
+            .then(warnings => this.appendWarnings(warnings))
+            .catch(err => console.error(err))
 
         //this.floodWarning.getWarning(this.state.currentLocation)
         //    .then(warnings => this.appendWarnings(warnings))
         //    .catch(err => console.error(err))
 
-        //this.powerWarning.getWarning(this.state.currentLocation)
-        //    .then(warnings => this.appendWarnings(warnings))
-        //    .catch(err => console.error(err))
+        this.powerWarning.getWarning(this.state.currentLocation)
+            .then(warnings => this.appendWarnings(warnings))
+            .catch(err => console.error(err))
 
-        this.postcodeToPes.lookupPes()
+
 
     }
 
     appendWarnings(newWarnings) {
         console.log('appending warnings', newWarnings.length)
+        console.log('appending warnings', newWarnings)
         if(newWarnings && newWarnings.length > 0) {
             const oldMarkers = this.state.warnings;
             const markers = update(oldMarkers, {

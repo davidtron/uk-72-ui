@@ -47,6 +47,7 @@ export default class WeatherWarning {
                     const poly = new google.maps.Polygon({paths: weatherWarningPolygon})
                     const center = poly.my_getBounds().getCenter()
 
+                    // TODO - use geolib
                     // Check if our coords are within it
                     //if(google.maps.geometry.poly.containsLocation(location.location, poly)) {
                         warnings.push({
@@ -72,7 +73,7 @@ export default class WeatherWarning {
     }
 }
 
-
+// TODO - remove and use geolib
 google.maps.Polygon.prototype.my_getBounds=function(){
     var bounds = new google.maps.LatLngBounds()
     this.getPath().forEach(function(element,index){bounds.extend(element)})
