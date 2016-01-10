@@ -61,7 +61,7 @@ export default class SimpleMapPage extends Component {
     }
 
     polygonClick(warning) {
-        //console.log(warning.text.substring(0, 10))
+        console.log(warning.text.substring(0, 10))
     }
 
     render() {
@@ -79,7 +79,7 @@ export default class SimpleMapPage extends Component {
         this.props.warnings.map((warning, index) => {
             if(warning.polygons) {
                return warning.polygons.map((polygon, index) => {
-                 return <Polygon paths={polygon} options={this.polygonOptionsFor(warning)} onClick={this.polygonClick(warning)} />
+                 return <Polygon paths={polygon} options={this.polygonOptionsFor(warning)} onClick={() => this.polygonClick(warning)} />
                })
             }
         })
