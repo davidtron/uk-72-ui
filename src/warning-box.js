@@ -35,7 +35,7 @@ export default class WarningBox extends Component {
     }
 
     loadWarnings() {
-        this.setState({ warnings: []})
+        this.setState({ warnings: [], allWarnings: []})
 
 
         // Look at spreading the promise to run in parallel
@@ -55,7 +55,6 @@ export default class WarningBox extends Component {
 
     appendWarnings(newWarnings) {
         console.log('appending warnings', newWarnings.length)
-        console.log('appending warnings', newWarnings)
         if(newWarnings && newWarnings.length > 0) {
             const oldMarkers = this.state.warnings;
             const markers = update(oldMarkers, {
@@ -65,6 +64,7 @@ export default class WarningBox extends Component {
             this.setState({warnings: markers})
         }
     }
+
 
     componentDidMount () {
 
@@ -76,23 +76,33 @@ export default class WarningBox extends Component {
             .catch(err => console.error(err))
     }
 
-    moveMap(location) {
-        // TODO use the bounds to set zoom
+    // Used to move the map when selecting an item from the list
+    // we do not want to listen to any new bounds as that would cause the list to filter to one item
+    moveMap(bounds, location) {
+
+        const newZoom = this.map.calculateZoomForBounds(bounds)
+        console.log('new zoom -> ', newZoom)
 
         this.setState({
             mapOptions: {
                 center: location,
-                zoom: 15
+                zoom: newZoom
             }
         });
     }
 
+    // Used only after geolocating to set a location (and not the bounds)
+    // we want the bounds passed back to filter warnings list
     selectLocation(location) {
         console.log('trying to set location', location)
         this.setState({
-            currentLocation: location
+            currentLocation: location,
+            mapOptions: {
+                center: location.location,
+                zoom: 15
+            }
         });
-        this.moveMap(location.location)
+        const newZoom = this.map.reportBoundsChanged()
     }
 
 
@@ -102,8 +112,12 @@ export default class WarningBox extends Component {
     }
 
     handleMapChange(change) {
+
+
         // Filter the results based on the bounds and zoom
-        console.log(change);
+
+        // is there any way to ignore map changes triggered by us
+        console.log(change)
     }
 
     render() {
@@ -119,7 +133,7 @@ export default class WarningBox extends Component {
                     <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 </div>
                 <div className='col-md-8' style={mapHeight}>
-                    <WarningMap mapOptions={this.state.mapOptions} warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
+                    <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions} warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
                 </div>
             </div>
         )

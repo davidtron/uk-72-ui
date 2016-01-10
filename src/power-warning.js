@@ -3,7 +3,6 @@
 import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
 import PostcodeToPes from './postcode-to-pes'
-import geodesy from 'geodesy'
 import geolib from 'geolib'
 
 export default class PowerWarning {
@@ -77,6 +76,7 @@ export default class PowerWarning {
 
                             const bounds = geolib.getBoundsOfDistance(outage, 25)
 
+                            // bounds[0] is southwest corner
                             const polygon = [
                                 {lat: bounds[1].latitude, lng: bounds[1].longitude},
                                 {lat: bounds[1].latitude, lng: bounds[0].longitude},
