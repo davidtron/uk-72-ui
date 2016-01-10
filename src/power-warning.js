@@ -1,6 +1,5 @@
 'use strict'
 
-// TODO - convert into imports once I work out how
 import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
 import PostcodeToPes from './postcode-to-pes'

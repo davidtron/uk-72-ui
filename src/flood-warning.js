@@ -70,61 +70,90 @@ export default class FloodWarning {
     getWarning(location) {
         console.log('Get flood warnings for ', location)
 
+
+
         // TODO - change distance
         //return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat='+location.location.lat+'&long='+location.location.lng+'&dist=600')
         return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat='+location.location.lat+'&long='+location.location.lng+'&dist=600')
             .then(response => response.json())
             .then(floods => {
+                // TODO - cache this file.
                 console.log('fetched floods from API', floods)
 
 
-
+                // Calculate center of flood area from the OsGridRef and set as location
 
                 // We 
 
-                //new geodesy.OsGridRef(east, north)
+                //
+                const d = []
 
 
                 let warnings =[]
+                floods.items.forEach(flood => {
 
-                return this.getFloodAreaPolygons(floods)
-                    .then((results) => {
-
-                        console.log('processed the flood areas, do we still have floods in scope?', floods)
-
-
-                        // Now process each into a warning
-                        let warnings = []
-
-                        //console.log('here comes the flood ',floods.items[0])
-
-                        floods.items.forEach((flood, index) => {
-
-                            /*
-                             location: { lat: center.lat(), lng: center.lng()},
-                             validFrom: warning.validFrom,
-                             validTo: warning.validTo,
-                             warningClass: warning.warningClass,
-                             warningImpact: warning.warningImpact,
-                             warningLevel: warning.warningLevel,
-                             warningLikelihood: warning.warningLikelihood,
-                             */
-
-                            // TODO - use what we pass through in results rather than relookup from cache
-                            let d = this.inMemory[flood.floodAreaID]
-
-                            warnings.push({
-                                text: flood.description,
-                                detail: flood.message,
-                                polygons: d,
-                                type: 'flood',
-                                key: flood.floodAreaID
-                            })
-                        })
+                    // Find midpoint of flood area
+                    const lower = flood.floodArea.envelope.lowerCorner
+                    const upper = flood.floodArea.envelope.upperCorner
+                    const low = geodesy.OsGridRef.osGridToLatLon(new geodesy.OsGridRef(lower.lx, lower.ly))
+                    const up = geodesy.OsGridRef.osGridToLatLon(new geodesy.OsGridRef(upper.ux, upper.uy))
+                    const midpoint = new geodesy.LatLonSpherical(low.lat, low.lon).midpointTo(new geodesy.LatLonSpherical(up.lat, up.lon))
 
 
-                        return warnings
+                    // TODO - create a bounding box for the flood and a link that allows us to download and cache the
+                    // polygon data when requested
+
+
+                    warnings.push({
+                        text: flood.description,
+                        detail: flood.message,
+                        location: {lat: midpoint.lat, lng: midpoint.lon},
+                        polygons: d,
+                        type: 'flood',
+                        key: flood.floodAreaID
                     })
+                })
+
+                return warnings;
+
+                //return this.getFloodAreaPolygons(floods)
+                //    .then((results) => {
+                //
+                //        console.log('processed the flood areas, do we still have floods in scope?', floods)
+                //
+                //
+                //        // Now process each into a warning
+                //        let warnings = []
+                //
+                //        //console.log('here comes the flood ',floods.items[0])
+                //
+                //        floods.items.forEach((flood, index) => {
+                //
+                //            /*
+                //             location: { lat: center.lat(), lng: center.lng()},
+                //             validFrom: warning.validFrom,
+                //             validTo: warning.validTo,
+                //             warningClass: warning.warningClass,
+                //             warningImpact: warning.warningImpact,
+                //             warningLevel: warning.warningLevel,
+                //             warningLikelihood: warning.warningLikelihood,
+                //             */
+                //
+                //            // TODO - use what we pass through in results rather than relookup from cache
+                //            let d = this.inMemory[flood.floodAreaID]
+                //
+                //            warnings.push({
+                //                text: flood.description,
+                //                detail: flood.message,
+                //                polygons: d,
+                //                type: 'flood',
+                //                key: flood.floodAreaID
+                //            })
+                //        })
+                //
+                //
+                //        return warnings
+                //    })
             })
     }
 }
