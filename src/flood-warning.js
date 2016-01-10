@@ -2,7 +2,8 @@
 
 import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
-import geodesy from 'geodesy'
+import geolib from 'geolib'
+import OSPoint from 'ospoint'
 
 
 export default class FloodWarning {
@@ -95,9 +96,10 @@ export default class FloodWarning {
                     // Find midpoint of flood area
                     const lower = flood.floodArea.envelope.lowerCorner
                     const upper = flood.floodArea.envelope.upperCorner
-                    const low = geodesy.OsGridRef.osGridToLatLon(new geodesy.OsGridRef(lower.lx, lower.ly))
-                    const up = geodesy.OsGridRef.osGridToLatLon(new geodesy.OsGridRef(upper.ux, upper.uy))
-                    const midpoint = new geodesy.LatLonSpherical(low.lat, low.lon).midpointTo(new geodesy.LatLonSpherical(up.lat, up.lon))
+                    const low = new OSPoint(lower.ly, lower.lx).toWGS84()
+                    const up = new OSPoint(upper.uy, upper.ux).toWGS84()
+
+                    const midpoint = geolib.getCenter([low, up])
 
 
                     // TODO - create a bounding box for the flood and a link that allows us to download and cache the
@@ -107,7 +109,7 @@ export default class FloodWarning {
                     warnings.push({
                         text: flood.description,
                         detail: flood.message,
-                        location: {lat: midpoint.lat, lng: midpoint.lon},
+                        location: {lat: parseInt(midpoint.latitude), lng: parseInt(midpoint.longitude)},
 
                         type: 'flood',
                         key: flood.floodAreaID,

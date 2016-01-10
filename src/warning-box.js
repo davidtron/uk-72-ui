@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react'
 import {default as update} from "react-addons-update";
 import WarningList from './warning-list'
 import PostcodeForm from './postcode-form'
-import SimpleMapPage from './map'
+import WarningMap from './map'
 import WeatherWarning from './weather-warning'
 import FloodWarning from './flood-warning'
 import PowerWarning from './power-warning'
@@ -52,8 +52,6 @@ export default class WarningBox extends Component {
             .then(warnings => this.appendWarnings(warnings))
             .catch(err => console.error(err))
 
-
-
     }
 
     appendWarnings(newWarnings) {
@@ -82,7 +80,7 @@ export default class WarningBox extends Component {
     moveMap(location) {
         this.setState({
             mapOptions: {
-                panTo: location,
+                center: location,
                 zoom: 15
             }
         });
@@ -102,6 +100,10 @@ export default class WarningBox extends Component {
         this.loadWarnings()
     }
 
+    handleMapChange(change) {
+        console.log(change);
+    }
+
     render() {
         const mapHeight = {
             height: 400
@@ -114,7 +116,9 @@ export default class WarningBox extends Component {
                     <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
                     <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 </div>
-                <div className='col-md-8' style={mapHeight}><SimpleMapPage mapOptions={this.state.mapOptions} warnings={this.state.warnings}/></div>
+                <div className='col-md-8' style={mapHeight}>
+                    <WarningMap mapOptions={this.state.mapOptions} warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
+                </div>
             </div>
         )
     }

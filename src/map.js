@@ -1,35 +1,13 @@
 'use strict'
-import {default as React, Component} from "react";
+import React, { Component, PropTypes } from 'react'
+import {GoogleMap, GoogleMapLoader, Marker, Polygon} from 'react-google-maps'
+import {default as update} from 'react-addons-update'
 
-import {GoogleMap, GoogleMapLoader, Marker, Polygon} from "react-google-maps";
-import {default as update} from "react-addons-update";
-
-
-export default class SimpleMapPage extends Component {
+export default class WarningMap extends Component {
     constructor(props) {
         super(props)
     }
 
-    mapCallback(map, props) {
-        // Invokes the panTo function on the underlying map if we set new map options
-        if (!map) return
-        if (props.mapOptions.panTo) {
-            map.panTo(props.mapOptions.panTo)
-        }
-
-        // If we wanted to add geojson directly we could do it here
-        //console.log('http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon')
-        //map.props.map.data.loadGeoJson('http://environment.data.gov.uk/flood-monitoring/id/floodAreas/122WAC953/polygon');
-        //
-        ////map.props.map.data.addGeoJson(data);
-        //map.props.map.data.setStyle(function (feature) {
-        //    return {
-        //        fillColor: '#0099ff',
-        //        strokeWeight: 2,
-        //        fillOpacity: 0.35
-        //    };
-        //});
-    }
 
     polygonOptionsFor(warning) {
         let fill = '#0099ff'
@@ -64,32 +42,57 @@ export default class SimpleMapPage extends Component {
         console.log(warning.text.substring(0, 10))
     }
 
+    dragEnd() {
+        const zoomLevel = this.refs.map.getZoom();
+        const bounds = this.refs.map.getBounds();
+
+        const ne = bounds.getNorthEast()
+        const sw = bounds.getSouthWest()
+
+        // Call back to the parent the zoom level and bounds
+        this.props.onMapChange({
+            'zoom': zoomLevel,
+            'bounds': {
+                'ne': {'lat': ne.lat(), 'lng': ne.lng()},
+                'sw': {'lat': sw.lat(), 'lng': sw.lng()}
+            }
+        })
+    }
+
     render() {
 
         return (
-            <GoogleMapLoader containerElement={
+            <GoogleMapLoader
+                containerElement={
                  <div {...this.props} style={{ height: "100%" }} ></div>
                 }
-                             googleMapElement={
+                googleMapElement={
     <GoogleMap
-      ref={(map) => this.mapCallback(map, this.props)}
+      ref="map"
       {...this.props.mapOptions}
+      onDragend={::this.dragEnd}
      >
-     {  // Display any polygons
+     {
         this.props.warnings.map((warning, index) => {
             if(warning.polygons) {
                return warning.polygons.map((polygon, index) => {
-                 return <Polygon paths={polygon} options={this.polygonOptionsFor(warning)} onClick={() => this.polygonClick(warning)} />
+                 return <Polygon paths={polygon}
+                                 options={this.polygonOptionsFor(warning)}
+                                 onClick={() => this.polygonClick(warning)}
+                         />
                })
             }
         })
      }
-
-
-
     </GoogleMap>
   }
             />
         );
     }
+}
+
+WarningMap.propTypes = {
+    mapOptions: PropTypes.object.isRequired,
+    warnings: PropTypes.array.isRequired,
+    onMapChange: PropTypes.func.isRequired
 }

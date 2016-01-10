@@ -26,8 +26,9 @@
   "homepage": "https://github.com/davidtron/uk-72-ui#readme",
   "dependencies": {
     "can-use-dom": "^0.1.0",
-    "geodesy": "^1.0.2",
+    "geolib": "^2.0.18",
     "lscache": "^1.0.5",
+    "ospoint": "^0.2.0",
     "react": "^0.14.3",
     "react-addons-update": "^0.14.3",
     "react-dom": "^0.14.3",

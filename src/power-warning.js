@@ -4,6 +4,7 @@ import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
 import PostcodeToPes from './postcode-to-pes'
 import geodesy from 'geodesy'
+import geolib from 'geolib'
 
 export default class PowerWarning {
     constructor() {
@@ -63,8 +64,6 @@ export default class PowerWarning {
     }
 
     getWarning(location) {
-        // console.log('Get power warnings for ', location)
-
 
         return this.getPowerData(location)
             .then(warningsForDno => {
@@ -77,26 +76,28 @@ export default class PowerWarning {
                         // Filter the warnings based on location, include any within 100m
                         const distanceToYourLocation = 50000 // set to 100 when finish testing
 
-                        const yourLocation = new geodesy.LatLonSpherical(location.location.lat, location.location.lng)
-                        const outageLocation =  new geodesy.LatLonSpherical(outage.latitude, outage.longitude)
-                        const distance = yourLocation.distanceTo(outageLocation)
+                        if(outage.latitude && outage.longitude) {
+                            const distance = geolib.getDistance(location.location, outage)
+                            if (distance < distanceToYourLocation) {
 
-                        if (distance < distanceToYourLocation) {
+                                const warning = {
+                                    text: outage.info,
+                                    location: {lat: outage.latitude, lng: outage.longitude},
+                                    polygons: [this.createBoundingPolygon(outage, 50)],
+                                    type: 'power cut',
+                                    validFrom: outage.timeOfIncident,
+                                    validTo: outage.restorationTime,
+                                    url: setOfWarnings.uri,
+                                    key: outage.latitude + outage.longitude
+                                }
 
-                            const warning = {
-                                text: outage.info,
-                                location: {lat: outage.latitude, lng: outage.longitude},
-                                polygons: [this.createBoundingPolygon(outage, 50)],
-                                type: 'power cut',
-                                validFrom: outage.timeOfIncident,
-                                validTo: outage.restorationTime,
-                                url: setOfWarnings.uri,
-                                key: outage.latitude + outage.longitude
+                                warnings.push(warning)
                             }
-
-
-                            warnings.push(warning)
+                        } else {
+                            console.log('Outage has no location information', outage)
+                            // For now ignore it, we could do a postcode lookup and get a location that way
                         }
+
                     })
 
                 })
