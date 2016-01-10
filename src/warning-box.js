@@ -43,9 +43,9 @@ export default class WarningBox extends Component {
             .then(warnings => this.appendWarnings(warnings))
             .catch(err => console.error(err))
 
-        //this.floodWarning.getWarning(this.state.currentLocation)
-        //    .then(warnings => this.appendWarnings(warnings))
-        //    .catch(err => console.error(err))
+        this.floodWarning.getWarning(this.state.currentLocation)
+            .then(warnings => this.appendWarnings(warnings))
+            .catch(err => console.error(err))
 
         this.powerWarning.getWarning(this.state.currentLocation)
             .then(warnings => this.appendWarnings(warnings))

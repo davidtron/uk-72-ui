@@ -1,10 +1,10 @@
 'use strict'
 
-require('whatwg-fetch')
+// TODO - convert into imports once I work out how
+import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
 import PostcodeToPes from './postcode-to-pes'
-import geolib from 'geolib'
-
+import geodesy from 'geodesy'
 
 export default class PowerWarning {
     constructor() {
@@ -78,7 +78,10 @@ export default class PowerWarning {
                         // Filter the warnings based on location, include any within 100m
                         const distanceToYourLocation = 50000 // set to 100 when finish testing
 
-                        const distance = geolib.getDistance(location.location, outage)
+                        const yourLocation = new geodesy.LatLonSpherical(location.location.lat, location.location.lng)
+                        const outageLocation =  new geodesy.LatLonSpherical(outage.latitude, outage.longitude)
+                        const distance = yourLocation.distanceTo(outageLocation)
+
                         if (distance < distanceToYourLocation) {
 
                             const warning = {

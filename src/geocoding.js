@@ -1,6 +1,6 @@
 'use strict'
 
-require('whatwg-fetch')
+import defaultMember from 'whatwg-fetch'
 import { default as canUseDOM } from "can-use-dom"
 
 /**

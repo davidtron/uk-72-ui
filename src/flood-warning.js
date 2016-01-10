@@ -1,7 +1,8 @@
 'use strict'
 
-require('whatwg-fetch')
+import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
+import geodesy from 'geodesy'
 
 
 export default class FloodWarning {
@@ -75,6 +76,17 @@ export default class FloodWarning {
             .then(response => response.json())
             .then(floods => {
                 console.log('fetched floods from API', floods)
+
+
+
+
+                // We 
+
+                //new geodesy.OsGridRef(east, north)
+
+
+                let warnings =[]
+
                 return this.getFloodAreaPolygons(floods)
                     .then((results) => {
 
