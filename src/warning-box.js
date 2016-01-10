@@ -76,17 +76,11 @@ export default class WarningBox extends Component {
             .catch(err => console.error(err))
     }
 
-    // Used to move the map when selecting an item from the list
-    // we do not want to listen to any new bounds as that would cause the list to filter to one item
-    moveMap(bounds, location) {
-
-        const newZoom = this.map.calculateZoomForBounds(bounds)
-        console.log('new zoom -> ', newZoom)
+    moveMap(bounds) {
 
         this.setState({
             mapOptions: {
-                center: location,
-                zoom: newZoom
+                currentBounds: bounds
             }
         });
     }
@@ -98,11 +92,12 @@ export default class WarningBox extends Component {
         this.setState({
             currentLocation: location,
             mapOptions: {
+                currentBounds: null,
                 center: location.location,
                 zoom: 15
             }
         });
-        const newZoom = this.map.reportBoundsChanged()
+        this.map.reportBoundsChanged()
     }
 
 
@@ -117,7 +112,7 @@ export default class WarningBox extends Component {
         // Filter the results based on the bounds and zoom
 
         // is there any way to ignore map changes triggered by us
-        console.log(change)
+        console.log('-map change -> ',change)
     }
 
     render() {
