@@ -2,7 +2,7 @@
 
 import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
-
+import geolib from 'geolib'
 
 export default class WeatherWarning {
     constructor() {
@@ -12,7 +12,7 @@ export default class WeatherWarning {
 
     getWeatherData() {
         let weather = lscache.get('weather');
-        if(weather) {
+        if (weather) {
             console.log('fetched weather from cache', weather)
             return new Promise((resolve, reject) => resolve(weather))
         } else {
@@ -36,46 +36,33 @@ export default class WeatherWarning {
                 // check if the warning is within the given location
                 weather.forEach((warning, index) => {
 
-
-
-                    // TODO - this should not rely on google maps use a different lib for poly work
-                    // Convert polygon into a google polygon
                     const weatherWarningPolygon = warning.coord.map(coordinate => {
-                        return { lat: coordinate.latitude, lng: coordinate.longitude }
+                        return {lat: coordinate.latitude, lng: coordinate.longitude}
                     })
 
-                    const poly = new google.maps.Polygon({paths: weatherWarningPolygon})
-                    const center = poly.my_getBounds().getCenter()
+                    const bounds = geolib.getBounds(warning.coord)
+                    const center = geolib.getCenter(warning.coord)
 
-                    // TODO - use geolib
-                    // Check if our coords are within it
-                    //if(google.maps.geometry.poly.containsLocation(location.location, poly)) {
-                        warnings.push({
-                            text: warning.warningText,
-                            location: { lat: center.lat(), lng: center.lng()},
-                            polygons: [weatherWarningPolygon],
-                            type: warning.weather,
-                            validFrom: warning.validFrom,
-                            validTo: warning.validTo,
-                            warningClass: warning.warningClass,
-                            warningImpact: warning.warningImpact,
-                            warningLevel: warning.warningLevel,
-                            warningLikelihood: warning.warningLikelihood,
-                            key: warning.id
-                        })
-                    //}
-
-                    // add to
+                    warnings.push({
+                        text: warning.warningText,
+                        location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
+                        polygons: [weatherWarningPolygon],
+                        bounds: {
+                            sw: { lat: bounds.minLat, lng: bounds.minLng },
+                            ne: { lat: bounds.maxLat, lng: bounds.maxLng }
+                        },
+                        type: warning.weather,
+                        validFrom: warning.validFrom,
+                        validTo: warning.validTo,
+                        warningClass: warning.warningClass,
+                        warningImpact: warning.warningImpact,
+                        warningLevel: warning.warningLevel,
+                        warningLikelihood: warning.warningLikelihood,
+                        key: warning.id
+                    })
                 })
                 return warnings
             })
 
     }
-}
-
-// TODO - remove and use geolib
-google.maps.Polygon.prototype.my_getBounds=function(){
-    var bounds = new google.maps.LatLngBounds()
-    this.getPath().forEach(function(element,index){bounds.extend(element)})
-    return bounds
 }

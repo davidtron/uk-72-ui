@@ -13,6 +13,10 @@ export default class FloodWarning {
         this.inMemory = {}
     }
 
+    getFloodPolygon(floodAreaId) {
+        console.log('requested flood data for ', floodAreaId)
+    }
+
     getFloodAreaPolygons(floods) {
 
         let floodAreaPromises = []
@@ -96,20 +100,18 @@ export default class FloodWarning {
                     // Find midpoint of flood area
                     const lower = flood.floodArea.envelope.lowerCorner
                     const upper = flood.floodArea.envelope.upperCorner
-                    const low = new OSPoint(lower.ly, lower.lx).toWGS84()
-                    const up = new OSPoint(upper.uy, upper.ux).toWGS84()
-
-                    const midpoint = geolib.getCenter([low, up])
-
-
-                    // TODO - create a bounding box for the flood and a link that allows us to download and cache the
-                    // polygon data when requested.
-
+                    const southWestCorner = new OSPoint(lower.ly, lower.lx).toWGS84()
+                    const northEastCorner = new OSPoint(upper.uy, upper.ux).toWGS84()
+                    const midpoint = geolib.getCenter([southWestCorner, northEastCorner])
 
                     warnings.push({
                         text: flood.description,
                         detail: flood.message,
-                        location: {lat: parseInt(midpoint.latitude), lng: parseInt(midpoint.longitude)},
+                        location: {lat: parseFloat(midpoint.latitude), lng: parseFloat(midpoint.longitude)},
+                        bounds: {
+                            sw: { lat: parseFloat(southWestCorner.latitude), lng: parseFloat(southWestCorner.longitude) },
+                            ne: { lat: parseFloat(northEastCorner.latitude), lng: parseFloat(northEastCorner.longitude) }
+                        },
 
                         type: 'flood',
                         key: flood.floodAreaID,

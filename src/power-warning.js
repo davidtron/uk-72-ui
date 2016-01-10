@@ -71,61 +71,46 @@ export default class PowerWarning {
                 let warnings = []
                 warningsForDno.forEach(setOfWarnings => {
 
-
                     setOfWarnings.outages.forEach(outage => {
-                        // Filter the warnings based on location, include any within 100m
-                        const distanceToYourLocation = 50000 // set to 100 when finish testing
 
-                        if(outage.latitude && outage.longitude) {
-                            const distance = geolib.getDistance(location.location, outage)
-                            if (distance < distanceToYourLocation) {
+                        if (outage.latitude && outage.longitude) {
 
-                                const warning = {
-                                    text: outage.info,
-                                    location: {lat: outage.latitude, lng: outage.longitude},
-                                    polygons: [this.createBoundingPolygon(outage, 50)],
-                                    type: 'power cut',
-                                    validFrom: outage.timeOfIncident,
-                                    validTo: outage.restorationTime,
-                                    url: setOfWarnings.uri,
-                                    key: outage.latitude + outage.longitude
-                                }
+                            const bounds = geolib.getBoundsOfDistance(outage, 25)
 
-                                warnings.push(warning)
+                            const polygon = [
+                                {lat: bounds[1].latitude, lng: bounds[1].longitude},
+                                {lat: bounds[1].latitude, lng: bounds[0].longitude},
+                                {lat: bounds[0].latitude, lng: bounds[0].longitude},
+                                {lat: bounds[0].latitude, lng: bounds[1].longitude}
+                            ]
+
+                            const bounds2 = {
+                                sw: { lat: bounds[0].latitude, lng: bounds[0].longitude },
+                                ne: { lat: bounds[1].latitude, lng: bounds[1].longitude }
                             }
+
+                            const warning = {
+                                text: outage.info,
+                                location: {lat: outage.latitude, lng: outage.longitude},
+                                polygons: [polygon],
+                                bounds: bounds2,
+                                type: 'power cut',
+                                validFrom: outage.timeOfIncident,
+                                validTo: outage.restorationTime,
+                                url: setOfWarnings.uri,
+                                key: outage.latitude + outage.longitude
+                            }
+
+                            warnings.push(warning)
+
                         } else {
                             console.log('Outage has no location information', outage)
                             // For now ignore it, we could do a postcode lookup and get a location that way
                         }
-
                     })
-
                 })
 
                 return warnings
             })
-    }
-
-
-    createBoundingPolygon(outage, distance) {
-
-        const latitude = outage.latitude;
-        const longitude = outage.longitude;
-
-        // 6378000 Size of the Earth (in meters)
-        const longitudeD = (Math.asin(distance / (6378000 * Math.cos(Math.PI * latitude / 180)))) * 180 / Math.PI;
-        const latitudeD = (Math.asin(distance / 6378000)) * 180 / Math.PI;
-
-        const latitudeMax = latitude + (latitudeD);
-        const latitudeMin = latitude - (latitudeD);
-        const longitudeMax = longitude + (longitudeD);
-        const longitudeMin = longitude - (longitudeD);
-
-        return [
-            {lat: latitudeMax, lng: longitudeMax},
-            {lat: latitudeMax, lng: longitudeMin},
-            {lat: latitudeMin, lng:longitudeMin},
-            {lat: latitudeMin, lng: longitudeMax}
-      ]
     }
 }

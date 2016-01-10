@@ -35,7 +35,6 @@ export default class WarningBox extends Component {
     }
 
     loadWarnings() {
-
         this.setState({ warnings: []})
 
 
@@ -78,6 +77,8 @@ export default class WarningBox extends Component {
     }
 
     moveMap(location) {
+        // TODO use the bounds to set zoom
+
         this.setState({
             mapOptions: {
                 center: location,
@@ -101,6 +102,7 @@ export default class WarningBox extends Component {
     }
 
     handleMapChange(change) {
+        // Filter the results based on the bounds and zoom
         console.log(change);
     }
 
