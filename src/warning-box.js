@@ -121,7 +121,7 @@ export default class WarningBox extends Component {
         geolib.preparePolygonForIsPointInsideOptimized(mapBoundsPolygon)
 
         if(this.state.allWarnings) {
-            const filt = this.state.allWarnings.filter(warning => {
+            const currentWarnings = this.state.allWarnings.filter(warning => {
 
                 const a = geolib.isPointInsideWithPreparedPolygon(warning.bounds.sw, mapBoundsPolygon)
                 const b = geolib.isPointInsideWithPreparedPolygon(warning.bounds.ne, mapBoundsPolygon)
@@ -131,7 +131,7 @@ export default class WarningBox extends Component {
 
 
             this.setState({
-                warnings: filt,
+                warnings: currentWarnings,
                 mapOptions: {currentBounds: null}
             })
             console.log('-map change  -> ',change)

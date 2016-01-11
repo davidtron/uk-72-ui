@@ -2,11 +2,12 @@
 import React, { Component, PropTypes } from 'react'
 import {GoogleMap, GoogleMapLoader, Marker, Polygon} from 'react-google-maps'
 import {default as update} from 'react-addons-update'
+import throttle from 'lodash.throttle'
 
 export default class WarningMap extends Component {
     constructor(props) {
         super(props)
-        this.reportBoundsChanged = this.debounce(this.reportBoundsChanged, 100)
+        this.reportBoundsChanged = throttle(this.reportBoundsChanged, 250)
     }
 
     polygonOptionsFor(warning) {
@@ -65,21 +66,6 @@ export default class WarningMap extends Component {
         if (props.mapOptions.currentBounds) {
             const bounds = props.mapOptions.currentBounds
             map.fitBounds(new google.maps.LatLngBounds(bounds.sw, bounds.ne))
-        }
-    }
-
-    debounce(func, wait, immediate) {
-        let timeout
-        return function() {
-            const context = this, args = arguments
-            var later = function() {
-                timeout = null
-                if (!immediate) func.apply(context, args)
-            }
-            const callNow = immediate && !timeout
-            clearTimeout(timeout)
-            timeout = setTimeout(later, wait)
-            if (callNow) func.apply(context, args)
         }
     }
 

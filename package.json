@@ -27,6 +27,7 @@
   "dependencies": {
     "can-use-dom": "^0.1.0",
     "geolib": "^2.0.18",
+    "lodash.throttle": "^3.0.4",
     "lscache": "^1.0.5",
     "ospoint": "^0.2.0",
     "react": "^0.14.3",
