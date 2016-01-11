@@ -81,6 +81,9 @@ export default class FloodWarning {
             return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat='+location.location.lat+'&long='+location.location.lng+'&dist=1000')
                 .then(response => response.json())
                 .then(floods => {
+                    if(floods.errorType) {
+                        throw new Error('Could not process flood results:\n' + JSON.stringify(floods))
+                    }
                     console.log('fetched flood warnings from API ', floods)
                     lscache.set('flood', floods, 240)
                     return floods;

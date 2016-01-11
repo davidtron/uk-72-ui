@@ -10,6 +10,7 @@ import WeatherWarning from './weather-warning'
 import FloodWarning from './flood-warning'
 import PowerWarning from './power-warning'
 import Geocoding from './geocoding'
+import geolib from 'geolib'
 
 
 export default class WarningBox extends Component {
@@ -18,6 +19,7 @@ export default class WarningBox extends Component {
 
         this.state = {
             warnings: [],
+            allWarnings: [],
             mapOptions: {
                 zoom: 9,
                 center: { lat: 51.6799019, lng: -0.4235076 }
@@ -32,6 +34,7 @@ export default class WarningBox extends Component {
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
         this.selectLocation = this.selectLocation.bind(this)
         this.moveMap = this.moveMap.bind(this)
+        this.handleMapChange = this.handleMapChange.bind(this)
     }
 
     loadWarnings() {
@@ -56,12 +59,12 @@ export default class WarningBox extends Component {
     appendWarnings(newWarnings) {
         console.log('appending warnings', newWarnings.length)
         if(newWarnings && newWarnings.length > 0) {
-            const oldMarkers = this.state.warnings;
+            const oldMarkers = this.state.allWarnings;
             const markers = update(oldMarkers, {
                 $push: newWarnings
             });
 
-            this.setState({warnings: markers})
+            this.setState({allWarnings: markers})
         }
     }
 
@@ -107,12 +110,33 @@ export default class WarningBox extends Component {
     }
 
     handleMapChange(change) {
+        // Create a prepared bound polygon
+        const mapBoundsPolygon = [
+            { lat: change.bounds.ne.lat, lng: change.bounds.ne.lng },
+            { lat: change.bounds.ne.lat, lng: change.bounds.sw.lng },
+            { lat: change.bounds.sw.lat, lng: change.bounds.sw.lng },
+            { lat: change.bounds.sw.lat, lng: change.bounds.ne.lng }
+        ]
+
+        geolib.preparePolygonForIsPointInsideOptimized(mapBoundsPolygon)
+
+        if(this.state.allWarnings) {
+            const filt = this.state.allWarnings.filter(warning => {
+
+                const a = geolib.isPointInsideWithPreparedPolygon(warning.bounds.sw, mapBoundsPolygon)
+                const b = geolib.isPointInsideWithPreparedPolygon(warning.bounds.ne, mapBoundsPolygon)
+
+                return a || b
+            })
 
 
-        // Filter the results based on the bounds and zoom
+            this.setState({
+                warnings: filt,
+                mapOptions: {currentBounds: null}
+            })
+            console.log('-map change  -> ',change)
+        }
 
-        // is there any way to ignore map changes triggered by us
-        console.log('-map change -> ',change)
     }
 
     render() {

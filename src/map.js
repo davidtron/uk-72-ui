@@ -6,6 +6,7 @@ import {default as update} from 'react-addons-update'
 export default class WarningMap extends Component {
     constructor(props) {
         super(props)
+        this.reportBoundsChanged = this.debounce(this.reportBoundsChanged, 100)
     }
 
     polygonOptionsFor(warning) {
@@ -67,6 +68,21 @@ export default class WarningMap extends Component {
         }
     }
 
+    debounce(func, wait, immediate) {
+        let timeout
+        return function() {
+            const context = this, args = arguments
+            var later = function() {
+                timeout = null
+                if (!immediate) func.apply(context, args)
+            }
+            const callNow = immediate && !timeout
+            clearTimeout(timeout)
+            timeout = setTimeout(later, wait)
+            if (callNow) func.apply(context, args)
+        }
+    }
+
 
     render() {
         return (
@@ -79,7 +95,7 @@ export default class WarningMap extends Component {
       ref={map => {this.map = map; this.callOnMapRender(map, this.props)}}
 
       {...this.props.mapOptions}
-      onDrag={::this.reportBoundsChanged}
+      onBoundsChanged={::this.reportBoundsChanged}
      >
      {
         this.props.warnings.map((warning, index) => {

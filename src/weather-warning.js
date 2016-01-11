@@ -19,6 +19,9 @@ export default class WeatherWarning {
             return fetch('https://3tvc4lnrvi.execute-api.eu-west-1.amazonaws.com/development/weather/warnings')
                 .then(response => response.json())
                 .then(weather => {
+                    if(weather.errorType) {
+                        throw new Error('Could not process weather results:\n' + JSON.stringify(weather))
+                    }
                     console.log('fetched weather from API', weather)
                     lscache.set('weather', weather, 240) // cache for 4 hours
                     return weather

@@ -46,6 +46,9 @@ export default class PowerWarning {
                 })
                     .then(response => response.json())
                     .then(power => {
+                        if(power.errorType) {
+                            throw new Error('Could not process power results:\n' + JSON.stringify(power))
+                        }
                         console.log('fetched power warnings from API for DNO ' + dno, power)
 
                         // Not all dno data can be cached as some is specific to the given postcode.
