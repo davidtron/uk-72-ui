@@ -77,19 +77,22 @@ export default class PowerWarning {
 
                         if (outage.latitude && outage.longitude) {
 
-                            const bounds = geolib.getBoundsOfDistance(outage, 25)
+                            const polygonBounds = geolib.getBoundsOfDistance(outage, 25)
 
                             // bounds[0] is southwest corner
                             const polygon = [
-                                {lat: bounds[1].latitude, lng: bounds[1].longitude},
-                                {lat: bounds[1].latitude, lng: bounds[0].longitude},
-                                {lat: bounds[0].latitude, lng: bounds[0].longitude},
-                                {lat: bounds[0].latitude, lng: bounds[1].longitude}
+                                {lat: polygonBounds[1].latitude, lng: polygonBounds[1].longitude},
+                                {lat: polygonBounds[1].latitude, lng: polygonBounds[0].longitude},
+                                {lat: polygonBounds[0].latitude, lng: polygonBounds[0].longitude},
+                                {lat: polygonBounds[0].latitude, lng: polygonBounds[1].longitude}
                             ]
 
-                            const bounds2 = {
-                                sw: { lat: bounds[0].latitude, lng: bounds[0].longitude },
-                                ne: { lat: bounds[1].latitude, lng: bounds[1].longitude }
+                            const mapBounds = geolib.getBoundsOfDistance(outage, 250)
+
+
+                            const bounds = {
+                                sw: { lat: mapBounds[0].latitude, lng: mapBounds[0].longitude },
+                                ne: { lat: mapBounds[1].latitude, lng: mapBounds[1].longitude }
                             }
 
 
@@ -97,7 +100,7 @@ export default class PowerWarning {
                                 text: outage.info,
                                 location: {lat: outage.latitude, lng: outage.longitude},
                                 polygons: [polygon],
-                                bounds: bounds2,
+                                bounds: bounds,
                                 type: 'power cut',
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,

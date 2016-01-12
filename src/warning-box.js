@@ -108,30 +108,12 @@ export default class WarningBox extends Component {
         const allWarningsObj = this.state.allWarnings
         if (allWarningsObj) {
 
-            // Create a prepared bound polygon
-            const mapBoundsPolygon = [
-                {lat: currentBoundsAndZoom.bounds.ne.lat, lng: currentBoundsAndZoom.bounds.ne.lng},
-                {lat: currentBoundsAndZoom.bounds.ne.lat, lng: currentBoundsAndZoom.bounds.sw.lng},
-                {lat: currentBoundsAndZoom.bounds.sw.lat, lng: currentBoundsAndZoom.bounds.sw.lng},
-                {lat: currentBoundsAndZoom.bounds.sw.lat, lng: currentBoundsAndZoom.bounds.ne.lng}
-            ]
-
-            geolib.preparePolygonForIsPointInsideOptimized(mapBoundsPolygon)
-
-            const isVisibleOnMap = function (warning, mapBoundsPolygon) {
-                const a = geolib.isPointInsideWithPreparedPolygon(warning.bounds.sw, mapBoundsPolygon)
-                const b = geolib.isPointInsideWithPreparedPolygon(warning.bounds.ne, mapBoundsPolygon)
-
-                return a || b
-            }
-
             const currentWarnings = []
-
 
             Object.keys(allWarningsObj).forEach(warningKey => {
                 const warning = allWarningsObj[warningKey]
 
-                if (isVisibleOnMap(warning, mapBoundsPolygon)) {
+                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning.bounds)) {
                     if (!warning.polygons && warning.polygonsFunction) {
                         console.log('invoking polygon promise for ' + warningKey)
                         warning.polygonsFunction.call()
@@ -144,7 +126,7 @@ export default class WarningBox extends Component {
                                 const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
 
                                 // Find index of updated item in current warnings
-                                const indexof = this.state.warnings.findIndex((element, index, array) => {
+                                const indexOf = this.state.warnings.findIndex((element, index, array) => {
                                     if (element.key === warningKey) {
                                         return true
                                     }
@@ -153,7 +135,7 @@ export default class WarningBox extends Component {
 
                                 // Splice in the new value to the array
                                 const oldWarnings = this.state.warnings
-                                const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexof, 1, warning]]})
+                                const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
 
                                 this.setState({
                                     allWarnings: updatedAllWarnings,
@@ -168,13 +150,38 @@ export default class WarningBox extends Component {
 
             })
 
-
             this.setState({
                 warnings: currentWarnings,
                 mapOptions: {setBounds: null}
             })
         }
+    }
 
+    doBoundingBoxesIntersect(currentBounds, warningBounds) {
+
+        const currentTopLeftX = currentBounds.sw.lng
+        const currentTopLeftY = currentBounds.ne.lat
+        const currentBottomRightX = currentBounds.ne.lng
+        const currentBottomRightY = currentBounds.sw.lat
+
+        const warningTopLeftX = warningBounds.sw.lng
+        const warningTopLeftY = warningBounds.ne.lat
+        const warningBottomRightX = warningBounds.ne.lng
+        const warningBottomRightY = warningBounds.sw.lat
+
+        const rabx = Math.abs(currentTopLeftX + currentBottomRightX - warningTopLeftX - warningBottomRightX)
+        const raby = Math.abs(currentTopLeftY + currentBottomRightY - warningTopLeftY - warningBottomRightY)
+
+        //rAx + rBx
+        const raxPrbx = currentBottomRightX - currentTopLeftX + warningBottomRightX - warningTopLeftX
+
+        //rAy + rBy
+        const rayPrby = currentTopLeftY - currentBottomRightY + warningTopLeftY - warningBottomRightY
+
+        if(rabx <= raxPrbx && raby <= rayPrby) {
+            return true
+        }
+        return false
     }
 
     render() {
