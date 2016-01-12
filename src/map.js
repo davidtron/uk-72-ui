@@ -12,23 +12,38 @@ export default class WarningMap extends Component {
 
     polygonOptionsFor(warning) {
         let fill = '#0099ff'
-        if (warning.warningLevel) {
-            // Met office levels
-            let warnLevel = warning.warningLevel.toUpperCase()
-            switch (warnLevel) {
-                case 'YELLOW':
-                    fill = '#ffff66'
-                    break;
-                case 'AMBER':
-                    fill = '#ff9933'
-                    break;
-                case 'RED':
-                    fill = '#ff0000'
-                    break;
-                default:
-                    fill = '#33cc33'
-            }
-        }
+
+        /*
+        Possible
+
+        weather warningLevel is string
+            values {'AMBER','YELLOW','RED'}
+
+        flood warningLevel is number
+
+        TODO - map in flood-warning and weather-warning to same type
+        - then its the map responsibility to use the type and level to pick correct polygon options
+
+         */
+
+
+        //if (warning.warningLevel) {
+        //
+        //    let warnLevel = warning.warningLevel.toUpperCase()
+        //    switch (warnLevel) {
+        //        case 'YELLOW':
+        //            fill = '#ffff66'
+        //            break;
+        //        case 'AMBER':
+        //            fill = '#ff9933'
+        //            break;
+        //        case 'RED':
+        //            fill = '#ff0000'
+        //            break;
+        //        default:
+        //            fill = '#33cc33'
+        //    }
+        //}
 
         return {
             strokeColor: '#000000',
@@ -63,8 +78,8 @@ export default class WarningMap extends Component {
     callOnMapRender(map, props) {
         if (!map) return
 
-        if (props.mapOptions.currentBounds) {
-            const bounds = props.mapOptions.currentBounds
+        if (props.mapOptions.setBounds) {
+            const bounds = props.mapOptions.setBounds
             map.fitBounds(new google.maps.LatLngBounds(bounds.sw, bounds.ne))
         }
     }

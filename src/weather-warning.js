@@ -34,35 +34,37 @@ export default class WeatherWarning {
 
         return this.getWeatherData()
             .then(weather => {
-                let warnings = []
+                let warnings = {}
 
                 // check if the warning is within the given location
-                weather.forEach((warning, index) => {
+                weather.forEach((weatherWarning, index) => {
 
-                    const weatherWarningPolygon = warning.coord.map(coordinate => {
+                    const weatherWarningPolygon = weatherWarning.coord.map(coordinate => {
                         return {lat: coordinate.latitude, lng: coordinate.longitude}
                     })
 
-                    const bounds = geolib.getBounds(warning.coord)
-                    const center = geolib.getCenter(warning.coord)
+                    const bounds = geolib.getBounds(weatherWarning.coord)
+                    const center = geolib.getCenter(weatherWarning.coord)
 
-                    warnings.push({
-                        text: warning.warningText,
+                    const warning = {
+                        text: weatherWarning.warningText,
                         location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
                         polygons: [weatherWarningPolygon],
                         bounds: {
                             sw: { lat: bounds.minLat, lng: bounds.minLng },
                             ne: { lat: bounds.maxLat, lng: bounds.maxLng }
                         },
-                        type: warning.weather,
-                        validFrom: warning.validFrom,
-                        validTo: warning.validTo,
-                        warningClass: warning.warningClass,
-                        warningImpact: warning.warningImpact,
-                        warningLevel: warning.warningLevel,
-                        warningLikelihood: warning.warningLikelihood,
-                        key: warning.id
-                    })
+                        type: weatherWarning.weather,
+                        validFrom: weatherWarning.validFrom,
+                        validTo: weatherWarning.validTo,
+                        warningClass: weatherWarning.warningClass,
+                        warningImpact: weatherWarning.warningImpact,
+                        warningLevel: weatherWarning.warningLevel,
+                        warningLikelihood: weatherWarning.warningLikelihood,
+                        key: weatherWarning.id
+                    }
+
+                    warnings[warning.key] = warning
                 })
                 return warnings
             })

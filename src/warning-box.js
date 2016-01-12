@@ -18,11 +18,11 @@ export default class WarningBox extends Component {
         super(props)
 
         this.state = {
-            warnings: [],
-            allWarnings: [],
+            warnings: [],      // warnings rendered on the list and on the map
+            allWarnings: {},   // in memory cache of all warnings received
             mapOptions: {
                 zoom: 9,
-                center: { lat: 51.6799019, lng: -0.4235076 }
+                center: {lat: 51.6799019, lng: -0.4235076}
             }
         }
 
@@ -38,8 +38,6 @@ export default class WarningBox extends Component {
     }
 
     loadWarnings() {
-        this.setState({ warnings: [], allWarnings: []})
-
 
         // Look at spreading the promise to run in parallel
         this.weatherWarning.getWarning(this.state.currentLocation)
@@ -57,19 +55,16 @@ export default class WarningBox extends Component {
     }
 
     appendWarnings(newWarnings) {
-        console.log('appending warnings', newWarnings.length)
-        if(newWarnings && newWarnings.length > 0) {
-            const oldMarkers = this.state.allWarnings;
-            const markers = update(oldMarkers, {
-                $push: newWarnings
-            });
-
-            this.setState({allWarnings: markers})
+        console.log('appending warnings', Object.keys(newWarnings).length)
+        if (newWarnings && Object.keys(newWarnings).length > 0) {
+            var allWarnings = this.state.allWarnings;
+            var updatedAllWarnings = update(allWarnings, {$merge: newWarnings});
+            this.setState({allWarnings: updatedAllWarnings})
         }
     }
 
 
-    componentDidMount () {
+    componentDidMount() {
 
         this.geocoding.getLocationAndPostcodeFromGeolocation()
             .then(position => {
@@ -83,7 +78,7 @@ export default class WarningBox extends Component {
 
         this.setState({
             mapOptions: {
-                currentBounds: bounds
+                setBounds: bounds
             }
         });
     }
@@ -95,7 +90,7 @@ export default class WarningBox extends Component {
         this.setState({
             currentLocation: location,
             mapOptions: {
-                currentBounds: null,
+                setBounds: null,
                 center: location.location,
                 zoom: 15
             }
@@ -109,32 +104,75 @@ export default class WarningBox extends Component {
         this.loadWarnings()
     }
 
-    handleMapChange(change) {
-        // Create a prepared bound polygon
-        const mapBoundsPolygon = [
-            { lat: change.bounds.ne.lat, lng: change.bounds.ne.lng },
-            { lat: change.bounds.ne.lat, lng: change.bounds.sw.lng },
-            { lat: change.bounds.sw.lat, lng: change.bounds.sw.lng },
-            { lat: change.bounds.sw.lat, lng: change.bounds.ne.lng }
-        ]
+    handleMapChange(currentBoundsAndZoom) {
+        const allWarningsObj = this.state.allWarnings
+        if (allWarningsObj) {
 
-        geolib.preparePolygonForIsPointInsideOptimized(mapBoundsPolygon)
+            // Create a prepared bound polygon
+            const mapBoundsPolygon = [
+                {lat: currentBoundsAndZoom.bounds.ne.lat, lng: currentBoundsAndZoom.bounds.ne.lng},
+                {lat: currentBoundsAndZoom.bounds.ne.lat, lng: currentBoundsAndZoom.bounds.sw.lng},
+                {lat: currentBoundsAndZoom.bounds.sw.lat, lng: currentBoundsAndZoom.bounds.sw.lng},
+                {lat: currentBoundsAndZoom.bounds.sw.lat, lng: currentBoundsAndZoom.bounds.ne.lng}
+            ]
 
-        if(this.state.allWarnings) {
-            const currentWarnings = this.state.allWarnings.filter(warning => {
+            geolib.preparePolygonForIsPointInsideOptimized(mapBoundsPolygon)
 
+            const isVisibleOnMap = function (warning, mapBoundsPolygon) {
                 const a = geolib.isPointInsideWithPreparedPolygon(warning.bounds.sw, mapBoundsPolygon)
                 const b = geolib.isPointInsideWithPreparedPolygon(warning.bounds.ne, mapBoundsPolygon)
 
                 return a || b
+            }
+
+            const currentWarnings = []
+
+
+            Object.keys(allWarningsObj).forEach(warningKey => {
+                const warning = allWarningsObj[warningKey]
+
+                if (isVisibleOnMap(warning, mapBoundsPolygon)) {
+                    if (!warning.polygons && warning.polygonsFunction) {
+                        console.log('invoking polygon promise for ' + warningKey)
+                        warning.polygonsFunction.call()
+                            .then(polygonData => {
+                                // Update allWarnings with received data
+                                console.log('received polygon data for ' + warningKey)
+
+                                warning.polygons = polygonData
+
+                                const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
+
+                                // Find index of updated item in current warnings
+                                const indexof = this.state.warnings.findIndex((element, index, array) => {
+                                    if (element.key === warningKey) {
+                                        return true
+                                    }
+                                    return false
+                                })
+
+                                // Splice in the new value to the array
+                                const oldWarnings = this.state.warnings
+                                const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexof, 1, warning]]})
+
+                                this.setState({
+                                    allWarnings: updatedAllWarnings,
+                                    warnings: updatedCurrentWarnings
+                                })
+                            })
+                            .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
+                    }
+
+                    currentWarnings.push(warning)
+                }
+
             })
 
 
             this.setState({
                 warnings: currentWarnings,
-                mapOptions: {currentBounds: null}
+                mapOptions: {setBounds: null}
             })
-            console.log('-map change  -> ',change)
         }
 
     }
@@ -152,7 +190,8 @@ export default class WarningBox extends Component {
                     <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 </div>
                 <div className='col-md-8' style={mapHeight}>
-                    <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions} warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
+                    <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions}
+                                warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
                 </div>
             </div>
         )

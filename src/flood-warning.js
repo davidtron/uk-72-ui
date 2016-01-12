@@ -10,66 +10,28 @@ export default class FloodWarning {
     constructor() {
         lscache.setBucket('uk72')
         lscache.flushExpired()
-        this.inMemory = {}
     }
 
-    getFloodPolygon(floodAreaId) {
-        console.log('requested flood data for ', floodAreaId)
-    }
+    static fetchFloodArea(floodUri) {
 
-    getFloodAreaPolygons(floods) {
-
-        let floodAreaPromises = []
-        floods.items.forEach((flood, index) => {
-
-            const floodAreaID = flood.floodAreaID;
-
-            console.log('looking for ', floodAreaID)
-            let floodPolygon = lscache.get(floodAreaID);
-            if (floodPolygon) {
-                this.inMemory[floodAreaID] = floodPolygon;
-            } else {
-                floodPolygon = this.inMemory[floodAreaID]
-            }
-
-            if (!floodPolygon) {
-
-
-                let v = flood.floodArea.polygon
-                console.log('looking for ' + floodAreaID, v)
-                const floodPolyPromise = fetch(v)
-                    .then(response => response.json())
-                    .then(polygonData => {
-                        console.log('got ', polygonData)
-                        let geo = polygonData.features[0].geometry
-                        if (geo.type === 'MultiPolygon') {
-                            let floodPolygonsForAreaID = geo.coordinates[0].map((polygons, index) => {
-
-                                return polygons.map((geoJSONCoords, index) => {
-                                    return {lat: geoJSONCoords[1], lng: geoJSONCoords[0]}
-                                })
-                            })
-                            console.log('cached as ' + floodAreaID, floodPolygonsForAreaID)
-                            lscache.set(floodAreaID, floodPolygonsForAreaID, 600)
-                            this.inMemory[floodAreaID] = floodPolygonsForAreaID;
-                            return floodPolygonsForAreaID
-                        } else {
-                            // TODO Handle non MultiPolygon
-                            throw new Error('unknown type of geojson data  for ' + floodAreaID + geo.type)
-                        }
+        console.log('looking for ', floodUri)
+        return fetch(floodUri)
+            .then(response => response.json())
+            .then(polygonData => {
+                let geo = polygonData.features[0].geometry
+                if (geo.type === 'MultiPolygon') {
+                    let floodPolygonsForAreaID = geo.coordinates[0].map((polygons, index) => {
+                        return polygons.map((geoJSONCoords, index) => {
+                            return {lat: geoJSONCoords[1], lng: geoJSONCoords[0]}
+                        })
                     })
-                    .catch(err => console.error(err))
-
-                floodAreaPromises.push(floodPolyPromise)
-            } else {
-                console.log('found in cache ' + floodAreaID)
-                floodAreaPromises.push(floodPolygon)
-            }
-        })
-
-        return Promise.all(floodAreaPromises)
+                    return floodPolygonsForAreaID
+                } else {
+                    // TODO Handle non MultiPolygon
+                    throw new Error('unknown type of geojson data for geotype ' + geo.type + ' and uri ' +floodUri )
+                }
+            })
     }
-
 
     getFloods(location) {
         let floodWarnings = lscache.get('flood');
@@ -78,10 +40,10 @@ export default class FloodWarning {
             return new Promise((resolve, reject) => resolve(floodWarnings))
         } else {
             // Retrieve all floods for the UK ( the API does support location and distance but choose to cache all for now
-            return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat='+location.location.lat+'&long='+location.location.lng+'&dist=1000')
+            return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat=' + location.location.lat + '&long=' + location.location.lng + '&dist=1000')
                 .then(response => response.json())
                 .then(floods => {
-                    if(floods.errorType) {
+                    if (floods.errorType) {
                         throw new Error('Could not process flood results:\n' + JSON.stringify(floods))
                     }
                     console.log('fetched flood warnings from API ', floods)
@@ -97,7 +59,7 @@ export default class FloodWarning {
         return this.getFloods(location)
             .then(floods => {
 
-                let warnings = []
+                let warnings = {}
                 floods.items.forEach(flood => {
 
                     // Find midpoint of flood area
@@ -107,15 +69,19 @@ export default class FloodWarning {
                     const northEastCorner = new OSPoint(upper.uy, upper.ux).toWGS84()
                     const midpoint = geolib.getCenter([southWestCorner, northEastCorner])
 
-                    warnings.push({
+                    const fetchPolygonData = function () {
+                        return FloodWarning.fetchFloodArea(flood.floodArea.polygon)
+                    }
+
+                    const warning = {
                         text: flood.description,
                         detail: flood.message,
                         location: {lat: parseFloat(midpoint.latitude), lng: parseFloat(midpoint.longitude)},
                         bounds: {
-                            sw: { lat: parseFloat(southWestCorner.latitude), lng: parseFloat(southWestCorner.longitude) },
-                            ne: { lat: parseFloat(northEastCorner.latitude), lng: parseFloat(northEastCorner.longitude) }
+                            sw: {lat: parseFloat(southWestCorner.latitude), lng: parseFloat(southWestCorner.longitude)},
+                            ne: {lat: parseFloat(northEastCorner.latitude), lng: parseFloat(northEastCorner.longitude)}
                         },
-
+                        polygonsFunction: fetchPolygonData,
                         type: 'flood',
                         key: flood.floodAreaID,
                         validFrom: flood.timeRaised,
@@ -124,7 +90,9 @@ export default class FloodWarning {
                         warningImpact: flood.severity,
                         warningLevel: flood.severityLevel,
                         warningLikelihood: flood.severity,
-                    })
+                    }
+
+                    warnings[warning.key] = warning
                 })
 
                 return warnings;

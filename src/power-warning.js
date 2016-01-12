@@ -70,7 +70,7 @@ export default class PowerWarning {
         return this.getPowerData(location)
             .then(warningsForDno => {
 
-                let warnings = []
+                let warnings = {}
                 warningsForDno.forEach(setOfWarnings => {
 
                     setOfWarnings.outages.forEach(outage => {
@@ -92,6 +92,8 @@ export default class PowerWarning {
                                 ne: { lat: bounds[1].latitude, lng: bounds[1].longitude }
                             }
 
+
+
                             const warning = {
                                 text: outage.info,
                                 location: {lat: outage.latitude, lng: outage.longitude},
@@ -101,10 +103,10 @@ export default class PowerWarning {
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,
                                 url: setOfWarnings.uri,
-                                key: outage.latitude + outage.longitude
+                                key: outage.latitude +'_' +outage.longitude
                             }
 
-                            warnings.push(warning)
+                            warnings[warning.key] = warning
 
                         } else {
                             console.log('Outage has no location information', outage)
