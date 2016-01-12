@@ -11,25 +11,30 @@ export default class WarningMap extends Component {
     }
 
     polygonOptionsFor(warning) {
-        let fill = null
 
-        if (warning.warningLevel) {
-            switch (warning.warningLevel) {
-                case 'yellow':
-                    fill = '#ffff66'
-                    break;
-                case 'amber':
-                    fill = '#ff9933'
-                    break;
-                case 'red':
-                    fill = '#ff0000'
-                    break;
-                case 'green':
-                    fill = '#33cc33'
-                    break;
-                default:
-                    fill = '#0099ff'
-            }
+        const metOffice = {
+            'yellow': '#ffff66',
+            'amber' : '#ff9933',
+            'red'   : '#ff0000',
+            'green' : '#33cc33'
+        }
+
+        const flood = {
+            'yellow': '#6699ff',
+            'amber' : '#3366ff',
+            'red'   : '#0033cc',
+            'green' : '#99ccff'
+        }
+
+        //flood, power cut
+
+        let fill = '#0099ff'
+        if(warning.type ==='flood') {
+            fill = flood[warning.warningLevel]
+        } else if(warning.type ==='power cut') {
+            fill = '#ff0000'
+        } else {
+            fill = metOffice[warning.warningLevel]
         }
 
         return {

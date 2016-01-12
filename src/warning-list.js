@@ -12,17 +12,22 @@ const WarningList = (props) => {
     )
   })
 
-  return (
-    <table>
-      <thead>
-      <tr>
-        <th>blah</th>
-        <th>blah</th>
-      </tr>
-      </thead>
-      <tbody>{warnings}</tbody>
-    </table>
-  )
+    if(!props.warnings || props.warnings.length === 0) {
+        return <div>No warnings for this area</div>
+    } else {
+        return (
+            <table>
+                <thead>
+                <tr>
+                    <th>blah</th>
+                    <th>blah</th>
+                </tr>
+                </thead>
+                <tbody>{warnings}</tbody>
+            </table>
+        )
+    }
+
 }
 
 WarningList.propTypes = {

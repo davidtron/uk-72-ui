@@ -87,7 +87,7 @@ export default class PowerWarning {
                                 {lat: polygonBounds[0].latitude, lng: polygonBounds[1].longitude}
                             ]
 
-                            const mapBounds = geolib.getBoundsOfDistance(outage, 250)
+                            const mapBounds = geolib.getBoundsOfDistance(outage, 100)
 
 
                             const bounds = {
