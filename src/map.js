@@ -11,39 +11,26 @@ export default class WarningMap extends Component {
     }
 
     polygonOptionsFor(warning) {
-        let fill = '#0099ff'
+        let fill = null
 
-        /*
-        Possible
-
-        weather warningLevel is string
-            values {'AMBER','YELLOW','RED'}
-
-        flood warningLevel is number
-
-        TODO - map in flood-warning and weather-warning to same type
-        - then its the map responsibility to use the type and level to pick correct polygon options
-
-         */
-
-
-        //if (warning.warningLevel) {
-        //
-        //    let warnLevel = warning.warningLevel.toUpperCase()
-        //    switch (warnLevel) {
-        //        case 'YELLOW':
-        //            fill = '#ffff66'
-        //            break;
-        //        case 'AMBER':
-        //            fill = '#ff9933'
-        //            break;
-        //        case 'RED':
-        //            fill = '#ff0000'
-        //            break;
-        //        default:
-        //            fill = '#33cc33'
-        //    }
-        //}
+        if (warning.warningLevel) {
+            switch (warning.warningLevel) {
+                case 'yellow':
+                    fill = '#ffff66'
+                    break;
+                case 'amber':
+                    fill = '#ff9933'
+                    break;
+                case 'red':
+                    fill = '#ff0000'
+                    break;
+                case 'green':
+                    fill = '#33cc33'
+                    break;
+                default:
+                    fill = '#0099ff'
+            }
+        }
 
         return {
             strokeColor: '#000000',

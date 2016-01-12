@@ -93,7 +93,6 @@ export default class PowerWarning {
                             }
 
 
-
                             const warning = {
                                 text: outage.info,
                                 location: {lat: outage.latitude, lng: outage.longitude},
@@ -102,6 +101,7 @@ export default class PowerWarning {
                                 type: 'power cut',
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,
+                                warningLevel: 'amber',
                                 url: setOfWarnings.uri,
                                 key: outage.latitude +'_' +outage.longitude
                             }

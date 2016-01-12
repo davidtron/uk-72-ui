@@ -13,7 +13,6 @@ export default class FloodWarning {
     }
 
     static fetchFloodArea(floodUri) {
-
         console.log('looking for ', floodUri)
         return fetch(floodUri)
             .then(response => response.json())
@@ -53,6 +52,19 @@ export default class FloodWarning {
         }
     }
 
+    static warningMapping(level) {
+        switch (level) {
+            case 3:
+                return 'yellow'
+            case 2:
+                return 'amber'
+            case 1:
+                return 'red'
+            default:
+                return 'green'
+        }
+    }
+
     getWarning(location) {
         console.log('Get flood warnings for ', location)
 
@@ -88,7 +100,7 @@ export default class FloodWarning {
                         validTo: null,
                         warningClass: flood.severity,
                         warningImpact: flood.severity,
-                        warningLevel: flood.severityLevel,
+                        warningLevel: FloodWarning.warningMapping(flood.severityLevel),
                         warningLikelihood: flood.severity,
                     }
 

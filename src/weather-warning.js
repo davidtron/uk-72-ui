@@ -19,13 +19,28 @@ export default class WeatherWarning {
             return fetch('https://3tvc4lnrvi.execute-api.eu-west-1.amazonaws.com/development/weather/warnings')
                 .then(response => response.json())
                 .then(weather => {
-                    if(weather.errorType) {
+                    if (weather.errorType) {
                         throw new Error('Could not process weather results:\n' + JSON.stringify(weather))
                     }
                     console.log('fetched weather from API', weather)
                     lscache.set('weather', weather, 240) // cache for 4 hours
                     return weather
                 })
+        }
+    }
+
+    static warningMapping(level) {
+
+        let warnLevel = level.toUpperCase()
+        switch (warnLevel) {
+            case 'YELLOW':
+                return 'yellow'
+            case 'AMBER':
+                return 'amber'
+            case 'RED':
+                return 'red'
+            default:
+                return 'green'
         }
     }
 
@@ -51,15 +66,15 @@ export default class WeatherWarning {
                         location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
                         polygons: [weatherWarningPolygon],
                         bounds: {
-                            sw: { lat: bounds.minLat, lng: bounds.minLng },
-                            ne: { lat: bounds.maxLat, lng: bounds.maxLng }
+                            sw: {lat: bounds.minLat, lng: bounds.minLng},
+                            ne: {lat: bounds.maxLat, lng: bounds.maxLng}
                         },
                         type: weatherWarning.weather,
                         validFrom: weatherWarning.validFrom,
                         validTo: weatherWarning.validTo,
                         warningClass: weatherWarning.warningClass,
                         warningImpact: weatherWarning.warningImpact,
-                        warningLevel: weatherWarning.warningLevel,
+                        warningLevel: WeatherWarning.warningMapping(weatherWarning.warningLevel),
                         warningLikelihood: weatherWarning.warningLikelihood,
                         key: weatherWarning.id
                     }
