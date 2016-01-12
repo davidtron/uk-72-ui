@@ -16,15 +16,7 @@ const WarningList = (props) => {
         return <div>No warnings for this area</div>
     } else {
         return (
-            <table>
-                <thead>
-                <tr>
-                    <th>blah</th>
-                    <th>blah</th>
-                </tr>
-                </thead>
-                <tbody>{warnings}</tbody>
-            </table>
+            <div>{warnings}</div>
         )
     }
 

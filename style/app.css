@@ -1,3 +1,5 @@
+@import "../node_modules/weather-icons/css/weather-icons.css";
+
 .warning-list {
     height: 400px;
     overflow: scroll;

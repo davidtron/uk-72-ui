@@ -6,10 +6,11 @@ import React, { PropTypes } from 'react'
 const Warning = (props) => {
 
   return (
-    <tr>
-      <td className='warning'>{props.warning.text}</td>
-      <td onClick={() => {props.onWarningClick(props.warning.bounds)}}>{props.warning.type}</td>
-    </tr>
+      <div>
+          <i className="wi wi-day-lightning"></i>
+          <span className='warning'>{props.warning.text}</span>
+          <span onClick={() => {props.onWarningClick(props.warning.bounds)}}>{props.warning.type}</span>
+      </div>
   )
 }
 
