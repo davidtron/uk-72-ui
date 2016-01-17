@@ -3,6 +3,7 @@
 import Geocoding from './geocoding'
 
 import React, { Component, PropTypes } from 'react'
+import input from 'bootstrap.native'
 
 export default class PostcodeForm extends Component {
   constructor(props) {

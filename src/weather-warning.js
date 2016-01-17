@@ -44,6 +44,13 @@ export default class WeatherWarning {
         }
     }
 
+    static firstUpper(string) {
+        if(!string) {
+            return ''
+        }
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
+    }
+
     getWarning(location) {
         console.log('Get weather warnings for ', location)
 
@@ -62,7 +69,8 @@ export default class WeatherWarning {
                     const center = geolib.getCenter(weatherWarning.coord)
 
                     const warning = {
-                        text: weatherWarning.warningText,
+                        text: WeatherWarning.firstUpper(weatherWarning.warningClass) + ' ' + weatherWarning.weather.toLowerCase(),
+                        detail: weatherWarning.warningText,
                         location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
                         polygons: [weatherWarningPolygon],
                         bounds: {

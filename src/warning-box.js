@@ -185,9 +185,7 @@ export default class WarningBox extends Component {
     }
 
     render() {
-        const mapHeight = {
-            height: 400
-        }
+
 
         return (
             <div className='comment-box row'>
@@ -196,7 +194,7 @@ export default class WarningBox extends Component {
                     <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
                     <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 </div>
-                <div className='col-md-8' style={mapHeight}>
+                <div className='col-md-8 warning-map'>
                     <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions}
                                 warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
                 </div>

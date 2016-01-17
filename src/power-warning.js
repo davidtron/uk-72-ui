@@ -97,7 +97,8 @@ export default class PowerWarning {
 
 
                             const warning = {
-                                text: outage.info,
+                                text: 'Power cut at ' +outage.postcode,
+                                detail: outage.info,
                                 location: {lat: outage.latitude, lng: outage.longitude},
                                 polygons: [polygon],
                                 bounds: bounds,
