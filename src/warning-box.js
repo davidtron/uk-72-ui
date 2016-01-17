@@ -115,36 +115,43 @@ export default class WarningBox extends Component {
 
                 if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning.bounds)) {
                     if (!warning.polygons && warning.polygonsFunction) {
-                        console.log('invoking polygon promise for ' + warningKey)
-                        warning.polygonsFunction.call()
-                            .then(polygonData => {
-                                // Update allWarnings with received data
-                                console.log('received polygon data for ' + warningKey)
+                        console.log('invoking polygon promise for ' + warning)
 
-                                warning.polygons = polygonData
+                        // Some warnings we dont want at a hugh zoom
+                        // such as flood polygons where there's a lot of data
 
-                                const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
+                        if(warning.type === 'flood' && currentBoundsAndZoom.zoom < 10) {
+                            console.log('Not retrieving flood data at zoom level ' + currentBoundsAndZoom.zoom)
+                        } else {
+                            warning.polygonsFunction.call()
+                                .then(polygonData => {
+                                    // Update allWarnings with received data
+                                    console.log('received polygon data for ' + warningKey)
 
-                                // Find index of updated item in current warnings
-                                const indexOf = this.state.warnings.findIndex((element, index, array) => {
-                                    if (element.key === warningKey) {
-                                        return true
-                                    }
-                                    return false
+                                    warning.polygons = polygonData
+
+                                    const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
+
+                                    // Find index of updated item in current warnings
+                                    const indexOf = this.state.warnings.findIndex((element, index, array) => {
+                                        if (element.key === warningKey) {
+                                            return true
+                                        }
+                                        return false
+                                    })
+
+                                    // Splice in the new value to the array
+                                    const oldWarnings = this.state.warnings
+                                    const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
+
+                                    this.setState({
+                                        allWarnings: updatedAllWarnings,
+                                        warnings: updatedCurrentWarnings
+                                    })
                                 })
-
-                                // Splice in the new value to the array
-                                const oldWarnings = this.state.warnings
-                                const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
-
-                                this.setState({
-                                    allWarnings: updatedAllWarnings,
-                                    warnings: updatedCurrentWarnings
-                                })
-                            })
-                            .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
+                                .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
+                        }
                     }
-
                     currentWarnings.push(warning)
                 }
 

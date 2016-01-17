@@ -86,7 +86,7 @@ export default class FloodWarning {
                     }
 
                     const warning = {
-                        text: flood.description,
+                        text: 'Flood at ' + flood.description,
                         detail: flood.message,
                         location: {lat: parseFloat(midpoint.latitude), lng: parseFloat(midpoint.longitude)},
                         bounds: {

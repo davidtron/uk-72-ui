@@ -69,7 +69,7 @@ export default class WeatherWarning {
                     const center = geolib.getCenter(weatherWarning.coord)
 
                     const warning = {
-                        text: WeatherWarning.firstUpper(weatherWarning.warningClass) + ' ' + weatherWarning.weather.toLowerCase(),
+                        text: WeatherWarning.firstUpper(weatherWarning.weather) + ' ' + weatherWarning.warningClass.toLowerCase(),
                         detail: weatherWarning.warningText,
                         location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
                         polygons: [weatherWarningPolygon],

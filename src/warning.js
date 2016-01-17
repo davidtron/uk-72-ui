@@ -49,13 +49,13 @@ export default class Warning extends Component {
 
 
         return (
-            <div className={warningMap[warning.warningLevel]} onClick={() => {this.props.onWarningClick(warning.bounds)}}>
+            <div className={warningMap[warning.warningLevel]} >
                 <div className="warning-row">
-                    <div className='warning-triangle'>
+                    <div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning.bounds)}}>
                         <i className="wi wi-day-lightning"></i>
                     </div>
                     <div className="warning-stuff">
-                        <span>{warning.type} {warning.text}</span><br />
+                        <div onClick={() => {this.props.onWarningClick(warning.bounds)}}>{warning.text}</div>
                         <a className="more" href="#" onClick={this.showDetail}> { this.state.showDetails ? 'less' : 'more' }</a>
                     </div>
 

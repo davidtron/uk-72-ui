@@ -13,12 +13,15 @@
     height: 50px;
 }
 
-.warning-row span {
-    font-size: 1.25em;
+.warning-row div {
+    font-size: 1.15em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .warning-row a {
-    font-size: 1.1em;
+    font-size: 1.0em;
 }
 .warning-triangle {
     float: left;
@@ -47,6 +50,8 @@
 
 .warning-details {
     padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .warning-map {
