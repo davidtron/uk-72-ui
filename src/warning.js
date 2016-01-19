@@ -18,6 +18,58 @@ export default class Warning extends Component {
         this.setState( {showDetails: !toggle})
     }
 
+    generateWarningIcon(warning) {
+        // TODO - this can be rationalised.  Possibly get rid of weather fonts and just have images
+
+        if(warning.type ==='power cut') {
+            return this.triangleWith('wi-lightning')
+        } else if(warning.type ==='flood') {
+            if(warning.warningLevel === 'amber') {
+                return this.triangleWithCss('triangle-flood2')
+            } else if(warning.warningLevel === 'red') {
+                return this.triangleWithCss('triangle-flood3')
+            } else {
+                return this.triangleWithCss('triangle-flood1')
+            }
+        } else {
+
+            const weatherType = warning.type.toLowerCase()
+            if(weatherType.startsWith('snow')) {
+                return this.triangleWithCss('triangle-snow')
+            }
+
+            if(weatherType.startsWith('ice')) {
+                return this.triangleWithCss('triangle-ice')
+            }
+
+            if(weatherType.startsWith('rain')) {
+                return this.triangleWith('wi-rain')
+            }
+
+            if(weatherType.startsWith('wind')) {
+                return this.triangleWith('wi-strong-wind')
+            }
+
+            if(weatherType.startsWith('fog')) {
+                return this.triangleWith('wi-fog')
+            }
+
+        }
+        return this.triangleWith('wi-rain')
+    }
+
+    triangleWith(weatherIcon) {
+        const wi = 'wi ' + weatherIcon
+
+        return (<div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning.bounds)}}>
+            <i className={wi}></i>
+        </div>)
+    }
+
+    triangleWithCss(css) {
+        return (<div className={css} onClick={() => {this.props.onWarningClick(warning.bounds)}}></div>)
+    }
+
     render() {
         // Overall class name of row
         const warningMap = {
@@ -51,9 +103,7 @@ export default class Warning extends Component {
         return (
             <div className={warningMap[warning.warningLevel]} >
                 <div className="warning-row">
-                    <div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning.bounds)}}>
-                        <i className="wi wi-day-lightning"></i>
-                    </div>
+                    {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
                         <div onClick={() => {this.props.onWarningClick(warning.bounds)}}>{warning.text}</div>
                         <a className="more" href="#" onClick={this.showDetail}> { this.state.showDetails ? 'less' : 'more' }</a>

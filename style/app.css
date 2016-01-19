@@ -32,10 +32,57 @@
     background-repeat: no-repeat;
 }
 
+.triangle-flood1 {
+    float: left;
+    height: 50px;
+    width: 50px;
+    background-image: url("../assets/flood_1.png");
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+}
+
+.triangle-flood2 {
+    float: left;
+    height: 50px;
+    width: 50px;
+    background-image: url("../assets/flood_2.png");
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+}
+
+.triangle-flood3 {
+    float: left;
+    height: 50px;
+    width: 50px;
+    background-image: url("../assets/flood_3.png");
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+}
+
+.triangle-snow {
+    float: left;
+    height: 50px;
+    width: 50px;
+    background-image: url("../assets/snow.png");
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+}
+
+.triangle-ice {
+    float: left;
+    height: 50px;
+    width: 50px;
+    background-image: url("../assets/ice.png");
+    background-size: 50px 50px;
+    background-repeat: no-repeat;
+}
+
+
+
 .warning-triangle i {
-    padding-left: 0.75em;
+    padding-left: 0.70em;
     padding-top: 1.35em;
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: black;
 }
 
