@@ -29,7 +29,6 @@ export default class Warning extends Component {
             return (n < 10) ? ("0" + n) : n
         }
 
-
         let timeString = null
         if(date.getDay() === now.getDay() && date.getMonth() === now.getMonth() && date.getYear() === now.getYear()) {
             const in12 = date.getHours() % 12
