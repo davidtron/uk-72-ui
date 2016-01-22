@@ -18,12 +18,42 @@ export default class Warning extends Component {
         this.setState( {showDetails: !toggle})
     }
 
-    generateWarningIcon(warning) {
-        // TODO - this can be rationalised.  Possibly get rid of weather fonts and just have images
+    generateTimeFragment(label, time) {
+        if(!time) return null
 
+        const date = new Date(time)
+        // if the date is today just return the time part
+        const now = new Date()
+
+        function pad(n) {
+            return (n < 10) ? ("0" + n) : n
+        }
+
+
+        let timeString = null
+        if(date.getDay() === now.getDay() && date.getMonth() === now.getMonth() && date.getYear() === now.getYear()) {
+            const in12 = date.getHours() % 12
+            const iconForTime = 'wi wi-time-' + (in12 === 0 ? 12 : in12)
+
+            timeString = <i className={iconForTime}>{pad(date.getHours()) +':' + pad(date.getMinutes())}</i>
+        } else {
+            timeString = date.toLocaleDateString()
+        }
+
+
+        // From <i className="wi wi-time-12">12</i>
+        return <span>{label} {timeString}</span>
+    }
+
+    generateWarningIcon(warning) {
+
+        // Power cuts
         if(warning.type ==='power cut') {
             return this.triangleWith(warning,'wi-lightning')
-        } else if(warning.type ==='flood') {
+        }
+
+        // Floods
+        else if(warning.type ==='flood') {
             if(warning.warningLevel === 'amber') {
                 return this.triangleWithCss(warning,'triangle-flood2')
             } else if(warning.warningLevel === 'red') {
@@ -31,7 +61,10 @@ export default class Warning extends Component {
             } else {
                 return this.triangleWithCss(warning, 'triangle-flood1')
             }
-        } else {
+        }
+
+        // Weather
+        else {
 
             const weatherType = warning.type.toLowerCase()
             if(weatherType.startsWith('snow')) {
@@ -79,12 +112,6 @@ export default class Warning extends Component {
             'red': 'wp alert-danger'
         }
 
-        // TODO - work out how to map the time component of a warning into icon
-        const timeMap = {}
-
-        // TODO - work out how to map warning type to correct icon or background image
-        const warningTypeMap = {}
-
         // Map the warning type and severity to correct image/icon combo
         let warning = this.props.warning
 
@@ -94,7 +121,9 @@ export default class Warning extends Component {
                     {warning.detail}
                 </div>
                 <div>
-                    From <i className="wi wi-time-12">12</i> to <i className="wi wi-time-3">15</i>
+                    {this.generateTimeFragment('From', warning.validFrom)} {this.generateTimeFragment('to', warning.validTo)}
+                </div>
+                <div>
                     <a className="more" href="#">National Power</a>
                 </div>
             </div>
