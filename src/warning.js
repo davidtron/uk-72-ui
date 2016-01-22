@@ -61,13 +61,13 @@ export default class Warning extends Component {
     triangleWith(warning, weatherIcon) {
         const wi = 'wi ' + weatherIcon
 
-        return (<div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning.bounds)}}>
+        return (<div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning)}}>
             <i className={wi}></i>
         </div>)
     }
 
     triangleWithCss(warning, css) {
-        return (<div className={css} onClick={() => {this.props.onWarningClick(warning.bounds)}}></div>)
+        return (<div className={css} onClick={() => {this.props.onWarningClick(warning)}}></div>)
     }
 
     render() {
@@ -106,7 +106,7 @@ export default class Warning extends Component {
                     {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
                         <a className="more" href="#" onClick={this.showDetail}>{warning.text}</a>
-                        <div onClick={() => {this.props.onWarningClick(warning.bounds)}}>{warning.area}</div>
+                        <div onClick={() => {this.props.onWarningClick(warning)}}>{warning.area}</div>
                     </div>
 
                 </div>
