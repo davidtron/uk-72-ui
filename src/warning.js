@@ -40,8 +40,6 @@ export default class Warning extends Component {
             timeString = date.toLocaleDateString()
         }
 
-
-        // From <i className="wi wi-time-12">12</i>
         return <span>{label} {timeString}</span>
     }
 
