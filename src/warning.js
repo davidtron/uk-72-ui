@@ -22,43 +22,43 @@ export default class Warning extends Component {
         // TODO - this can be rationalised.  Possibly get rid of weather fonts and just have images
 
         if(warning.type ==='power cut') {
-            return this.triangleWith('wi-lightning')
+            return this.triangleWith(warning,'wi-lightning')
         } else if(warning.type ==='flood') {
             if(warning.warningLevel === 'amber') {
-                return this.triangleWithCss('triangle-flood2')
+                return this.triangleWithCss(warning,'triangle-flood2')
             } else if(warning.warningLevel === 'red') {
-                return this.triangleWithCss('triangle-flood3')
+                return this.triangleWithCss(warning, 'triangle-flood3')
             } else {
-                return this.triangleWithCss('triangle-flood1')
+                return this.triangleWithCss(warning, 'triangle-flood1')
             }
         } else {
 
             const weatherType = warning.type.toLowerCase()
             if(weatherType.startsWith('snow')) {
-                return this.triangleWithCss('triangle-snow')
+                return this.triangleWithCss(warning,'triangle-snow')
             }
 
             if(weatherType.startsWith('ice')) {
-                return this.triangleWithCss('triangle-ice')
+                return this.triangleWithCss(warning, 'triangle-ice')
             }
 
             if(weatherType.startsWith('rain')) {
-                return this.triangleWith('wi-rain')
+                return this.triangleWith(warning, 'wi-rain')
             }
 
             if(weatherType.startsWith('wind')) {
-                return this.triangleWith('wi-cloudy-gusts')
+                return this.triangleWith(warning, 'wi-cloudy-gusts')
             }
 
             if(weatherType.startsWith('fog')) {
-                return this.triangleWith('wi-fog')
+                return this.triangleWith(warning, 'wi-fog')
             }
 
         }
-        return this.triangleWith('wi-rain')
+        return this.triangleWith(warning, 'wi-rain')
     }
 
-    triangleWith(weatherIcon) {
+    triangleWith(warning, weatherIcon) {
         const wi = 'wi ' + weatherIcon
 
         return (<div className='warning-triangle' onClick={() => {this.props.onWarningClick(warning.bounds)}}>
@@ -66,7 +66,7 @@ export default class Warning extends Component {
         </div>)
     }
 
-    triangleWithCss(css) {
+    triangleWithCss(warning, css) {
         return (<div className={css} onClick={() => {this.props.onWarningClick(warning.bounds)}}></div>)
     }
 
@@ -105,8 +105,8 @@ export default class Warning extends Component {
                 <div className="warning-row">
                     {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
-                        <div onClick={() => {this.props.onWarningClick(warning.bounds)}}>{warning.text}</div>
-                        <a className="more" href="#" onClick={this.showDetail}> { this.state.showDetails ? 'less' : 'more' }</a>
+                        <a className="more" href="#" onClick={this.showDetail}>{warning.text}</a>
+                        <div onClick={() => {this.props.onWarningClick(warning.bounds)}}>{warning.area}</div>
                     </div>
 
                 </div>

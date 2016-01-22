@@ -44,6 +44,23 @@ export default class WeatherWarning {
         }
     }
 
+    static warningText(weatherWarning) {
+
+        const weatherText = WeatherWarning.firstUpper(weatherWarning.weather) + ' ' + weatherWarning.warningClass.toLowerCase()
+        let warnLevel = weatherWarning.warningLevel.toUpperCase()
+
+        switch (warnLevel) {
+            case 'YELLOW':
+                return weatherText +'. Be aware'
+            case 'AMBER':
+                return weatherText +'. Be prepared'
+            case 'RED':
+                return weatherText +'. Take action'
+            default:
+                return weatherText
+        }
+    }
+
     static firstUpper(string) {
         if(!string) {
             return ''
@@ -69,7 +86,8 @@ export default class WeatherWarning {
                     const center = geolib.getCenter(weatherWarning.coord)
 
                     const warning = {
-                        text: WeatherWarning.firstUpper(weatherWarning.weather) + ' ' + weatherWarning.warningClass.toLowerCase(),
+                        text: WeatherWarning.warningText(weatherWarning),
+                        area: weatherWarning.regions.join(', '),
                         detail: weatherWarning.warningText,
                         location: {lat: parseFloat(center.latitude), lng: parseFloat(center.longitude)},
                         polygons: [weatherWarningPolygon],

@@ -65,6 +65,19 @@ export default class FloodWarning {
         }
     }
 
+    static warningText(level) {
+        switch (level) {
+            case 3:
+                return 'Flooding possible. Be prepared'
+            case 2:
+                return 'Flood expected. Action required'
+            case 1:
+                return 'Severe flooding. Danger to life'
+            default:
+                return 'Flood not expected'
+        }
+    }
+
     getWarning(location) {
         console.log('Get flood warnings for ', location)
 
@@ -86,7 +99,8 @@ export default class FloodWarning {
                     }
 
                     const warning = {
-                        text: 'Flood at ' + flood.description,
+                        text: FloodWarning.warningText(flood.severityLevel),
+                        area: flood.description,
                         detail: flood.message,
                         location: {lat: parseFloat(midpoint.latitude), lng: parseFloat(midpoint.longitude)},
                         bounds: {
