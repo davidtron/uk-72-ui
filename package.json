@@ -7,7 +7,7 @@
     "start": "parallelshell \"npm run -s watch\" ",
     "watch": "watchify src/index.js -dv -t browserify-css -t babelify -o dist/bundle.js",
     "build": "NODE_ENV=production browserify src/index.js -t [ browserify-css --minify=true ] -t babelify -g uglifyify -o dist/bundle.js",
-    "test": "NODE_ENV=dev browserify test/*.js -t babelify -o dist/test.js && node dist/test.js",
+    "test": "NODE_ENV=dev browserify test/*.js -t babelify -t brfs -o dist/test.js && node dist/test.js",
     "standard": "standard --verbose | snazzy"
   },
   "repository": {
@@ -43,6 +43,7 @@
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.3.13",
     "babelify": "^7.2.0",
+    "brfs": "^1.4.3",
     "browserify": "^12.0.1",
     "browserify-css": "^0.8.4",
     "eslint": "^1.10.3",

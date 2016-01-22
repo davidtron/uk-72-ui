@@ -117,8 +117,9 @@ export default class WarningBox extends Component {
                     if (!warning.polygons && warning.polygonsFunction) {
                         console.log('invoking polygon promise for ' + warning)
 
-                        // Some warnings we dont want at a hugh zoom
+                        // Some warnings we dont want at a high zoom
                         // such as flood polygons where there's a lot of data
+                        // if we end up doing this for other polygons, then extract a method to filter the promises to invoke.
 
                         if(warning.type === 'flood' && currentBoundsAndZoom.zoom < 10) {
                             console.log('Not retrieving flood data at zoom level ' + currentBoundsAndZoom.zoom)

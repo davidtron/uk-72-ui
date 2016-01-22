@@ -4,6 +4,7 @@ import defaultMember from 'whatwg-fetch'
 import lscache from 'lscache'
 import geolib from 'geolib'
 import OSPoint from 'ospoint'
+import GeoJSON from './geo-json-to-polygon'
 
 
 export default class FloodWarning {
@@ -17,18 +18,12 @@ export default class FloodWarning {
         return fetch(floodUri)
             .then(response => response.json())
             .then(polygonData => {
-                let geo = polygonData.features[0].geometry
-                if (geo.type === 'MultiPolygon') {
-                    let floodPolygonsForAreaID = geo.coordinates[0].map((polygons, index) => {
-                        return polygons.map((geoJSONCoords, index) => {
-                            return {lat: geoJSONCoords[1], lng: geoJSONCoords[0]}
-                        })
-                    })
-                    return floodPolygonsForAreaID
-                } else {
-                    // TODO Handle non MultiPolygon
-                    throw new Error('unknown type of geojson data for geotype ' + geo.type + ' and uri ' +floodUri )
+
+                const polygons = new GeoJSON(polygonData)
+                if(polygons.type ==='Error') {
+                    throw new Error(polygons.message +', for geo type' + geo.type + ' and uri ' +floodUri )
                 }
+                return polygons
             })
     }
 
