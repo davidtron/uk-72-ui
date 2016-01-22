@@ -197,7 +197,6 @@ export default class WarningBox extends Component {
         return (
             <div className='comment-box row'>
                 <div className='col-md-4 warning-list'>
-                    <h1>Warnings</h1>
                     <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
                     <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
                 </div>

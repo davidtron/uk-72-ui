@@ -47,7 +47,7 @@ export default class Warning extends Component {
             }
 
             if(weatherType.startsWith('wind')) {
-                return this.triangleWith('wi-strong-wind')
+                return this.triangleWith('wi-cloudy-gusts')
             }
 
             if(weatherType.startsWith('fog')) {

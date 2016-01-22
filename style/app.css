@@ -1,10 +1,8 @@
 @import "../node_modules/bootstrap.native/assets/css/bootstrap.min.css";
-/*@import "../node_modules/bootstrap.native/assets/css/theme.css";*/
 @import "../node_modules/weather-icons/css/weather-icons.css";
 
-
 .warning-list {
-    height: 400px;
+    max-height: 400px;
     overflow: scroll;
     padding-right: 0px;
 }
@@ -80,8 +78,8 @@
 
 
 .warning-triangle i {
-    padding-left: 0.70em;
-    padding-top: 1.35em;
+    padding-left: 0.9em;
+    padding-top: 1.25em;
     font-size: 1.1em;
     color: black;
 }

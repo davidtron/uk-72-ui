@@ -47,6 +47,7 @@ export default class WarningMap extends Component {
     }
 
     polygonClick(warning) {
+        // TODO scroll list to the item
         console.log(warning.text.substring(0, 10))
     }
 

@@ -7,13 +7,15 @@ List:
  
     
 * Style the list items 
-    * When we click on warning expan for more information and link back to the source data
-    * Have correct weather icons
-    * Add in the flood icons
+
     * Change the css for bootstrap alerts to match the polygon colours
+    * Warning level displayed?
+    * Convert times and unify format for times
+    * Link to website for warning 
     
     * Scroll to list item and highlight when click on polygon
 
+    * When I click on 
 Misc:
 
 * Filter list after geolocate or postcode submission

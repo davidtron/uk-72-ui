@@ -46,7 +46,7 @@ export default class FloodWarning {
                         throw new Error('Could not process flood results:\n' + JSON.stringify(floods))
                     }
                     console.log('fetched flood warnings from API ', floods)
-                    lscache.set('flood', floods, 240)
+                    lscache.set('flood', floods, 15)
                     return floods;
                 })
         }
