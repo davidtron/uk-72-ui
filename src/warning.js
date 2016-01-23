@@ -29,17 +29,15 @@ export default class Warning extends Component {
             return (n < 10) ? ("0" + n) : n
         }
 
-        let timeString = null
-        if(date.getDay() === now.getDay() && date.getMonth() === now.getMonth() && date.getYear() === now.getYear()) {
-            const in12 = date.getHours() % 12
-            const iconForTime = 'wi wi-time-' + (in12 === 0 ? 12 : in12)
-
-            timeString = <i className={iconForTime}>{pad(date.getHours()) +':' + pad(date.getMinutes())}</i>
-        } else {
-            timeString = date.toLocaleDateString()
+        let dateString = null
+        if(date.getDay() !== now.getDay() || date.getMonth() !== now.getMonth() || date.getYear() !== now.getYear()) {
+            dateString = date.toLocaleDateString('en-GB') +' '
         }
 
-        return <span>{label} {timeString}</span>
+        const in12 = date.getHours() % 12
+        const iconForTime = 'wi wi-time-' + (in12 === 0 ? 12 : in12)
+
+        return <span>{label} {dateString}<i className={iconForTime}>{pad(date.getHours()) +':' + pad(date.getMinutes())}</i></span>
     }
 
     generateWarningIcon(warning) {
@@ -121,7 +119,8 @@ export default class Warning extends Component {
                     {this.generateTimeFragment('From', warning.validFrom)} {this.generateTimeFragment('to', warning.validTo)}
                 </div>
                 <div>
-                    <a className="more" href="#">National Power</a>
+                    <div>Telephone</div>
+                    <a target="_blank" href={warning.url.href}>{warning.url.name}</a>
                 </div>
             </div>
 
@@ -131,7 +130,7 @@ export default class Warning extends Component {
                 <div className="warning-row">
                     {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
-                        <a className="more" href="#" onClick={this.showDetail}>{warning.text}</a>
+                        <a href="#" onClick={this.showDetail}>{warning.text}</a>
                         <div onClick={() => {this.props.onWarningClick(warning)}}>{warning.area}</div>
                     </div>
 

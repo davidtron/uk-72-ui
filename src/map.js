@@ -38,8 +38,8 @@ export default class WarningMap extends Component {
         }
 
         return {
-            strokeColor: '#000000',
-            strokeOpacity: 0.0,
+            strokeColor: fill,
+            strokeOpacity: 0.75,
             strokeWeight: 1,
             fillColor: fill,
             fillOpacity: 0.35

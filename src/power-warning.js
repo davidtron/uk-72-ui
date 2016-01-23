@@ -61,8 +61,6 @@ export default class PowerWarning {
         })
 
         return Promise.all(powerPromises)
-
-
     }
 
     getWarning(location) {
@@ -95,7 +93,6 @@ export default class PowerWarning {
                                 ne: { lat: mapBounds[1].latitude, lng: mapBounds[1].longitude }
                             }
 
-
                             const warning = {
                                 text: 'Power cut. Be prepared',
                                 area: outage.postCode.join(', '),
@@ -107,7 +104,7 @@ export default class PowerWarning {
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,
                                 warningLevel: 'amber',
-                                url: setOfWarnings.uri,
+                                url: {href: setOfWarnings.uri, name: setOfWarnings.network},
                                 key: outage.latitude +'_' +outage.longitude
                             }
 

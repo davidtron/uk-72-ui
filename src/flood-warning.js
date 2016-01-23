@@ -111,6 +111,7 @@ export default class FloodWarning {
                         warningImpact: flood.severity,
                         warningLevel: FloodWarning.warningMapping(flood.severityLevel),
                         warningLikelihood: flood.severity,
+                        url: {href: 'http://apps.environment-agency.gov.uk/flood/31618.aspx', name: 'Environment Agency'}
                     }
 
                     warnings[warning.key] = warning
