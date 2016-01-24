@@ -103,3 +103,21 @@
     height: 400px;
     padding-left: 0px;
 }
+
+
+.alert-info {
+    background-color: #ffff8e;
+}
+
+.alert-warning {
+    background-color: #FFBA76;
+}
+
+.alert-danger {
+    background-color: #F96D6D;
+}
+
+.no-warnings {
+    padding-left: 10px;
+    padding-right: 10px;
+}

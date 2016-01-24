@@ -13,10 +13,10 @@ const WarningList = (props) => {
   })
 
     if(!props.warnings || props.warnings.length === 0) {
-        return <div>
+        return <div className='no-warnings'>
             <h3>No warnings for this area</h3>
-            <p>Use the map to see floods and weather warnings for the UK</p>
-            <p>Use the search option to find power outages for a postcode</p>
+            <p>Move the map to see any flood and weather warnings in the UK</p>
+            <p>Type a postcode to check for power outages</p>
         </div>
     } else {
         return (

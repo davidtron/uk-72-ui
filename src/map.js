@@ -19,6 +19,7 @@ export default class WarningMap extends Component {
             'green' : '#33cc33'
         }
 
+        // Shades of blue for flooding
         const flood = {
             'yellow': '#6699ff',
             'amber' : '#3366ff',
@@ -32,7 +33,7 @@ export default class WarningMap extends Component {
         if(warning.type ==='flood') {
             fill = flood[warning.warningLevel]
         } else if(warning.type ==='power cut') {
-            fill = '#ff0000'
+            fill = '#ff9933'
         } else {
             fill = metOffice[warning.warningLevel]
         }
