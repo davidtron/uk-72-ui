@@ -104,6 +104,7 @@ export default class PowerWarning {
                                 validFrom: outage.timeOfIncident,
                                 validTo: outage.restorationTime,
                                 warningLevel: 'amber',
+                                phone: this.findContactDetails(setOfWarnings.network),
                                 url: {href: setOfWarnings.uri, name: setOfWarnings.network},
                                 key: outage.latitude +'_' +outage.longitude
                             }
@@ -119,5 +120,19 @@ export default class PowerWarning {
 
                 return warnings
             })
+    }
+
+    findContactDetails(network) {
+
+        const mapping = {
+            'UK Power Networks' : ['0800 31­63 105'],
+            'Western Power' : ['0800 6783 105'],
+            'SP Energy Networks' : ['Central & Southern Scotland: 0800 092 9290', 'Cheshire, Merseyside, North Wales & North Shropshire: 0800 001 5400'],
+            'Northern Power Grid' : ['North east: 0800 66 88 77', 'Yorkshire & North Lincs: 0800 375 675'],
+            'Scottish and Southern Energy' : ['Central southern England: 0800 072 7282', 'North of Scotland: 0800 300 999'],
+            'Electricity North West' : ['0800 195 4141'],
+            'GTC' : ['0800 0326 990']
+        }
+        return mapping[network]
     }
 }

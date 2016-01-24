@@ -103,8 +103,8 @@ export default class WeatherWarning {
                         warningLevel: WeatherWarning.warningMapping(weatherWarning.warningLevel),
                         warningLikelihood: weatherWarning.warningLikelihood,
                         key: weatherWarning.id,
-                        url: {href: 'http://www.metoffice.gov.uk/public/weather/warnings/#?tab=map&map=Warnings', name: 'MetOffice'},
-
+                        url: {href: 'http://www.metoffice.gov.uk/public/weather/warnings/#?tab=map&map=Warnings', name: 'Met Office'},
+                        phone: []
                     }
 
                     warnings[warning.key] = warning

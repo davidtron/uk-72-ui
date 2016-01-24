@@ -119,7 +119,7 @@ export default class Warning extends Component {
                     {this.generateTimeFragment('From', warning.validFrom)} {this.generateTimeFragment('to', warning.validTo)}
                 </div>
                 <div>
-                    <div>Telephone</div>
+                    { warning.phone.map((phone => <div>{phone}</div>))}
                     <a target="_blank" href={warning.url.href}>{warning.url.name}</a>
                 </div>
             </div>
