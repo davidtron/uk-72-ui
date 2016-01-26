@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <link href="node_modules/bootstrap.native/assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="style/app.css" rel="stylesheet">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvVogmCavLKcPYiS_HfnXm548iAREo7o0"></script>
+    <script src="node_modules/bootstrap.native/dist/bootstrap-native.js"></script>
 
 </head>
 <body>
+<!-- This page is for local dev and so bootstrap native is included here rather than compiled into the assets.
+     The outer website already had bootstrap so we rely on that to supply needed css and js
+-->
 
 <div id="app"></div>
 <script src="dist/bundle.js"></script>
