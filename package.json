@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "parallelshell \"npm run -s watch\" ",
-    "watch": "watchify src/index.js -dv -t browserify-css -t babelify -o dist/bundle.js",
+    "watch": "watchify src/index.js -dv -t browserify-css -t babelify -o dist/dist.js",
     "build": "NODE_ENV=production node dist-build.js",
     "test": "NODE_ENV=dev browserify test/*.js -t babelify -t brfs -o dist/test.js && node dist/test.js"
   },

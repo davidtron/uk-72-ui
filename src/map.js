@@ -88,7 +88,7 @@ export default class WarningMap extends Component {
                 googleMapElement={
     <GoogleMap
       ref={map => {this.map = map; this.callOnMapRender(map, this.props)}}
-
+      defaultOptions={{mapTypeControl: false}}
       {...this.props.mapOptions}
       onBoundsChanged={::this.reportBoundsChanged}
      >
