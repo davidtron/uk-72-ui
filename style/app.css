@@ -25,7 +25,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/warning.png");
+    background-image: url("../assets/images/warning.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
@@ -34,7 +34,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/flood_1.png");
+    background-image: url("../assets/images/flood_1.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
@@ -43,7 +43,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/flood_2.png");
+    background-image: url("../assets/images/flood_2.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
@@ -52,7 +52,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/flood_3.png");
+    background-image: url("../assets/images/flood_3.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
@@ -61,7 +61,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/snow.png");
+    background-image: url("../assets/images/snow.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
@@ -70,7 +70,7 @@
     float: left;
     height: 50px;
     width: 50px;
-    background-image: url("../assets/ice.png");
+    background-image: url("../assets/images/ice.png");
     background-size: 50px 50px;
     background-repeat: no-repeat;
 }
