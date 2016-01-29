@@ -12,14 +12,14 @@
 }
 
 .warning-row div {
-    font-size: 1.05em;
+    font-size: 0.9rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .warning-row a {
-    font-size: 1.0em;
+    font-size: 1.0rem;
 }
 .warning-triangle {
     float: left;
@@ -78,9 +78,9 @@
 
 
 .warning-triangle i {
-    padding-left: 0.7em;
-    padding-top: 0.95em;
-    font-size: 1.4em;
+    padding-left: 0.9rem;
+    padding-top: 1.25rem;
+    font-size: 1.4rem;
     color: black;
 }
 
@@ -110,7 +110,7 @@
 }
 
 .alert-warning {
-    background-color: #FFBA76;
+    background-color: #fbb03b;
 }
 
 .alert-danger {
