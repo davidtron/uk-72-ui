@@ -11,6 +11,7 @@ import FloodWarning from './flood-warning'
 import PowerWarning from './power-warning'
 import Geocoding from './geocoding'
 import geolib from 'geolib'
+import overlap from 'poly-overlap'
 
 
 export default class WarningBox extends Component {
@@ -116,7 +117,7 @@ export default class WarningBox extends Component {
             Object.keys(allWarningsObj).forEach(warningKey => {
                 const warning = allWarningsObj[warningKey]
 
-                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning.bounds)) {
+                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning)) {
                     if (!warning.polygons && warning.polygonsFunction) {
                         console.log('invoking polygon promise for ' + warning)
 
@@ -172,31 +173,50 @@ export default class WarningBox extends Component {
             .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
     }
 
-    doBoundingBoxesIntersect(currentBounds, warningBounds) {
+    doBoundingBoxesIntersect(currentBounds, warning) {
 
-        const currentTopLeftX = currentBounds.sw.lng
-        const currentTopLeftY = currentBounds.ne.lat
-        const currentBottomRightX = currentBounds.ne.lng
-        const currentBottomRightY = currentBounds.sw.lat
+        // TODO - put something in to choose polygon or bounding box based on type?
 
-        const warningTopLeftX = warningBounds.sw.lng
-        const warningTopLeftY = warningBounds.ne.lat
-        const warningBottomRightX = warningBounds.ne.lng
-        const warningBottomRightY = warningBounds.sw.lat
+        if(warning.polygons) {
 
-        const rabx = Math.abs(currentTopLeftX + currentBottomRightX - warningTopLeftX - warningBottomRightX)
-        const raby = Math.abs(currentTopLeftY + currentBottomRightY - warningTopLeftY - warningBottomRightY)
+            const viewPortCoords = [[currentBounds.ne.lat, currentBounds.ne.lng], [currentBounds.ne.lat, currentBounds.sw.lng], [currentBounds.sw.lat,currentBounds.sw.lng], [currentBounds.sw.lat, currentBounds.ne.lng]]
 
-        //rAx + rBx
-        const raxPrbx = currentBottomRightX - currentTopLeftX + warningBottomRightX - warningTopLeftX
+            // we want to return true for the first one we hit, so cant use for each
+            for(let i=0; i < warning.polygons.length; i++) {
+                const polygon = warning.polygons[i].map( (p) => {return [p.lat, p.lng]})
+                const foo = overlap.overlap(polygon, viewPortCoords)
+                if(foo) return true
+            }
 
-        //rAy + rBy
-        const rayPrby = currentTopLeftY - currentBottomRightY + warningTopLeftY - warningBottomRightY
+            return false
+        } else {
+            // Check if bounding boxes intercept
+            const warningBounds = warning.bounds
 
-        if(rabx <= raxPrbx && raby <= rayPrby) {
-            return true
+            const warningTopLeftX = warningBounds.sw.lng
+            const warningTopLeftY = warningBounds.ne.lat
+            const warningBottomRightX = warningBounds.ne.lng
+            const warningBottomRightY = warningBounds.sw.lat
+
+            const currentTopLeftX = currentBounds.sw.lng
+            const currentTopLeftY = currentBounds.ne.lat
+            const currentBottomRightX = currentBounds.ne.lng
+            const currentBottomRightY = currentBounds.sw.lat
+
+            const rabx = Math.abs(currentTopLeftX + currentBottomRightX - warningTopLeftX - warningBottomRightX)
+            const raby = Math.abs(currentTopLeftY + currentBottomRightY - warningTopLeftY - warningBottomRightY)
+
+            //rAx + rBx
+            const raxPrbx = currentBottomRightX - currentTopLeftX + warningBottomRightX - warningTopLeftX
+
+            //rAy + rBy
+            const rayPrby = currentTopLeftY - currentBottomRightY + warningTopLeftY - warningBottomRightY
+
+            if(rabx <= raxPrbx && raby <= rayPrby) {
+                return true
+            }
+            return false
         }
-        return false
     }
 
     render() {
