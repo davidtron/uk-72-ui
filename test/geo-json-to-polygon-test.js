@@ -12,10 +12,8 @@ test('parse polygon data into array of coords', (assert) => {
 
     const polygonsFromGeoJSON = new GeoJSON(retrievedPolygonData)
     assert.notEqual(polygonsFromGeoJSON.type, 'Error')
-    assert.equal(polygonsFromGeoJSON.length, 1)
+    assert.equal(polygonsFromGeoJSON.length, 133)
 
-    const points = polygonsFromGeoJSON[0][0]
-    assert.equal(points.length, 84)
     assert.end();
 
 })

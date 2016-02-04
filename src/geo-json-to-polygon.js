@@ -15,7 +15,7 @@ export default class GeoJSON {
                 } else {
                     obj = []
                     for (let i = 0; i < geojson.features.length; i++) {
-                        obj.push(_geometryToGoogleMaps(geojson.features[i].geometry))
+                        obj = obj.concat(_geometryToGoogleMaps(geojson.features[i].geometry))
                     }
                 }
                 break
@@ -123,6 +123,7 @@ var _geometryToGoogleMaps = function (geojsonGeometry) {
             googleObj = [];
             for (let i = 0; i < geojsonGeometry.coordinates.length; i++) {
                 paths = []
+
                 for (let j = 0; j < geojsonGeometry.coordinates[i].length; j++) {
                     path = []
                     for (let k = 0; k < geojsonGeometry.coordinates[i][j].length; k++) {
@@ -131,23 +132,22 @@ var _geometryToGoogleMaps = function (geojsonGeometry) {
                     }
                     if (!j) {
                         exteriorDirection = _ccw(path)
-                        paths.push(path)
+                        googleObj.push(path)
                     } else if (j === 1) {
                         interiorDirection = _ccw(path)
                         if (exteriorDirection === interiorDirection) {
-                            paths.push(path.reverse())
+                            googleObj.push(path.reverse())
                         } else {
-                            paths.push(path)
+                            googleObj.push(path)
                         }
                     } else {
                         if (exteriorDirection === interiorDirection) {
-                            paths.push(path.reverse())
+                            googleObj.push(path.reverse())
                         } else {
-                            paths.push(path)
+                            googleObj.push(path)
                         }
                     }
                 }
-                googleObj = paths
             }
 
             break;
