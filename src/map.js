@@ -85,6 +85,12 @@ export default class WarningMap extends Component {
             geolocation.push(<Marker defaultPosition={this.props.currentLocation.location} />)
         }
 
+        let zoom = null
+        if(this.map) {
+           zoom = this.map.getZoom()
+        }
+
+
         return (
             <GoogleMapLoader
                 containerElement={
@@ -99,7 +105,10 @@ export default class WarningMap extends Component {
      >
      {
         this.props.warnings.map((warning, index) => {
-            if(warning.polygons) {
+
+            const showPolygon = warning.polygons  && ( (warning.type === 'flood' && zoom > 13 ) || warning.type !== 'flood' )
+
+            if(showPolygon) {
                return warning.polygons.map((polygon, index) => {
                  return <Polygon paths={polygon}
                                  options={this.polygonOptionsFor(warning)}
