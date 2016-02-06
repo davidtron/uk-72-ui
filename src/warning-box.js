@@ -117,7 +117,9 @@ export default class WarningBox extends Component {
             Object.keys(allWarningsObj).forEach(warningKey => {
                 const warning = allWarningsObj[warningKey]
 
-                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning)) {
+                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom, warning)) {
+
+                    // Invoke the promise if weve not yet got the polygon data.
                     if (!warning.polygons && warning.polygonsFunction) {
                         //console.log('invoking polygon promise for ' + warning)
 
@@ -204,14 +206,19 @@ export default class WarningBox extends Component {
 
 
 
-    doBoundingBoxesIntersect(currentBounds, warning) {
+    doBoundingBoxesIntersect(currentBoundsAndZoom, warning) {
+        const currentBounds = currentBoundsAndZoom.bounds
 
         // TODO - put something in to choose polygon or bounding box based on type?
 
         if(this.boundingBoxesIntersect(currentBounds, warning)) {
+
+            const considerPolygon = warning.polygons && ( (warning.type === 'flood' && currentBoundsAndZoom.zoom < 6) || warning.type !== 'flood' )
+
             // Check if the polygons really intersect
 
-            if(warning.polygons) {
+            if(considerPolygon) {
+                //console.log('checking polygon ' + warning.type + ' ' + currentBoundsAndZoom.zoom  )
 
                 const viewPortCoords = [[currentBounds.ne.lat, currentBounds.ne.lng], [currentBounds.ne.lat, currentBounds.sw.lng], [currentBounds.sw.lat,currentBounds.sw.lng], [currentBounds.sw.lat, currentBounds.ne.lng]]
 
