@@ -119,14 +119,14 @@ export default class WarningBox extends Component {
 
                 if (this.doBoundingBoxesIntersect(currentBoundsAndZoom.bounds, warning)) {
                     if (!warning.polygons && warning.polygonsFunction) {
-                        console.log('invoking polygon promise for ' + warning)
+                        //console.log('invoking polygon promise for ' + warning)
 
                         // Some warnings we dont want at a high zoom
                         // such as flood polygons where there's a lot of data
                         // if we end up doing this for other polygons, then extract a method to filter the promises to invoke.
 
                         if(warning.type === 'flood' && currentBoundsAndZoom.zoom < 10) {
-                            console.log('Not retrieving flood data at zoom level ' + currentBoundsAndZoom.zoom)
+                            //console.log('Not retrieving flood data at zoom level ' + currentBoundsAndZoom.zoom)
                         } else {
                             this.loadPolygonDataUsingPromise(warning, warningKey);
                         }
@@ -240,7 +240,7 @@ export default class WarningBox extends Component {
                 </div>
                 <div className='col-md-8 warning-map'>
                     <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions}
-                                warnings={this.state.warnings} onMapChange={this.handleMapChange}/>
+                                warnings={this.state.warnings} onMapChange={this.handleMapChange} currentLocation={this.state.currentLocation}/>
                 </div>
             </div>
         )

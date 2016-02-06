@@ -80,6 +80,11 @@ export default class WarningMap extends Component {
 
 
     render() {
+        let geolocation = []
+        if(this.props.currentLocation) {
+            geolocation.push(<Marker defaultPosition={this.props.currentLocation.location} />)
+        }
+
         return (
             <GoogleMapLoader
                 containerElement={
@@ -102,7 +107,7 @@ export default class WarningMap extends Component {
                          />
                })
             }
-        })
+        }).concat(geolocation)
      }
     </GoogleMap>
   }
@@ -114,5 +119,6 @@ export default class WarningMap extends Component {
 WarningMap.propTypes = {
     mapOptions: PropTypes.object.isRequired,
     warnings: PropTypes.array.isRequired,
-    onMapChange: PropTypes.func.isRequired
+    onMapChange: PropTypes.func.isRequired,
+    currentLocation: PropTypes.object
 }
