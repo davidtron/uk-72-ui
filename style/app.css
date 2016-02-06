@@ -9,18 +9,18 @@
 
 .warning-row {
     height: 50px;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .warning-row div {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.warning-row a {
-    font-size: 1.0rem;
-}
+
 .warning-triangle {
     float: left;
     height: 50px;
@@ -95,7 +95,6 @@
 
 .warning-details {
     padding-top: 10px;
-    padding-left: 10px;
     padding-right: 10px;
 }
 
