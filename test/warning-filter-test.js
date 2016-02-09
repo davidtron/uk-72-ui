@@ -198,3 +198,34 @@ test('selectVisibleWarnings within bounding box, of type flood, zoom is above 10
     assert.end();
 })
 
+
+test('red warning comes before amber', (assert) => {
+    const warnings = [{warningLevel: 'amber', key: 'should be second'}, {warningLevel: 'red', key: 'should be first'}]
+
+    const results = warnings.sort(underTest.sortWarnings())
+
+    assert.equal(results[0].key, 'should be first')
+    assert.equal(results[1].key, 'should be second')
+    assert.end();
+
+})
+
+test('amber warning comes before yellow', (assert) => {
+    const warnings = [{warningLevel: 'yellow', key: 'should be second'}, {warningLevel: 'amber', key: 'should be first'}]
+
+    const results = warnings.sort(underTest.sortWarnings())
+
+    assert.equal(results[0].key, 'should be first')
+    assert.equal(results[1].key, 'should be second')
+    assert.end();
+})
+
+test('same warning level, order remains the same', (assert) => {
+    const warnings = [{warningLevel: 'amber', key: 'should remain first'}, {warningLevel: 'amber', key: 'should remain second'}]
+
+    const results = warnings.sort(underTest.sortWarnings())
+
+    assert.equal(results[0].key, 'should remain first')
+    assert.equal(results[1].key, 'should remain second')
+    assert.end();
+})

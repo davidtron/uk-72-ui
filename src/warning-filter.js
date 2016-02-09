@@ -2,7 +2,6 @@
 
 import overlap from 'poly-overlap'
 
-
 /**
  * Decide whether warnings should be shown.
  */
@@ -23,6 +22,12 @@ export default class WarningFilter {
         }
     }
 
+    /**
+     * Assumes that the returned function will be run against an Array of Warning's
+     * @param currentBoundsAndZoom of the map
+     * @param currentWarningKey key of currently selected warning
+     * @returns {Function} A filter that selects the current warning and amber and red flood warnings if the map is zoomed above level 10
+     */
     selectWarningsForMap(currentBoundsAndZoom, currentWarningKey) {
         return function(warning) {
             if(warning.key === currentWarningKey) return true
@@ -30,6 +35,23 @@ export default class WarningFilter {
             if(warning.type === 'flood' && currentBoundsAndZoom.zoom > 10 && warning.warningLevel !== 'yellow') return true
 
             return false
+        }
+    }
+
+    /**
+     * Function to sort warnings into order red -> amber -> yellow -> green
+     * @returns {Function}
+     */
+    sortWarnings() {
+        const levelMap = {
+            'red'    : 1,
+            'amber'  : 2,
+            'yellow' : 3,
+            'green'  : 4
+        }
+
+        return function(a,b) {
+            return levelMap[a.warningLevel] - levelMap[b.warningLevel]
         }
     }
 }
@@ -43,7 +65,6 @@ const _warningsThatOverlapWithMap = function(currentBoundsAndZoom, warning) {
         const considerPolygon = warning.polygons && ( (warning.type === 'flood' && currentBoundsAndZoom.zoom > 10) || warning.type !== 'flood' )
 
         if(considerPolygon) {
-            //console.log('checking polygon ' + warning.type + ' ' + currentBoundsAndZoom.zoom  )
 
             const viewPortCoords = [[currentBounds.ne.lat, currentBounds.ne.lng], [currentBounds.ne.lat, currentBounds.sw.lng], [currentBounds.sw.lat,currentBounds.sw.lng], [currentBounds.sw.lat, currentBounds.ne.lng]]
 

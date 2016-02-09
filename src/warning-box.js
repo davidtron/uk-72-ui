@@ -123,7 +123,9 @@ export default class WarningBox extends Component {
 
         if (allWarningsObj) {
 
-            const warningsInList = Object.values(allWarningsObj).filter(this.filterWarnings.selectVisibleWarnings(currentBoundsAndZoom))
+            const warningsInList = Object.values(allWarningsObj)
+                .filter(this.filterWarnings.selectVisibleWarnings(currentBoundsAndZoom))
+                .sort(this.filterWarnings.sortWarnings())
             const warningsOnMap = warningsInList.filter(this.filterWarnings.selectWarningsForMap(currentBoundsAndZoom, selectedWarningKey))
 
             // Load any polygons required for map that are not yet loaded.
