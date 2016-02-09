@@ -4,6 +4,9 @@ import {GoogleMap, GoogleMapLoader, Marker, Polygon} from 'react-google-maps'
 import {default as update} from 'react-addons-update'
 import throttle from 'lodash.throttle'
 
+/**
+ * Render a google map with a marker at the current location and polygons for passed in warnings.
+ */
 export default class WarningMap extends Component {
     constructor(props) {
         super(props)
@@ -14,25 +17,25 @@ export default class WarningMap extends Component {
 
         const metOffice = {
             'yellow': '#ffff66',
-            'amber' : '#ff9933',
-            'red'   : '#ff0000',
-            'green' : '#33cc33'
+            'amber': '#ff9933',
+            'red': '#ff0000',
+            'green': '#33cc33'
         }
 
         // Shades of blue for flooding
         const flood = {
             'yellow': '#6699ff',
-            'amber' : '#3366ff',
-            'red'   : '#0033cc',
-            'green' : '#99ccff'
+            'amber': '#3366ff',
+            'red': '#0033cc',
+            'green': '#99ccff'
         }
 
         //flood, power cut
 
         let fill = '#0099ff'
-        if(warning.type ==='flood') {
+        if (warning.type === 'flood') {
             fill = flood[warning.warningLevel]
-        } else if(warning.type ==='power cut') {
+        } else if (warning.type === 'power cut') {
             fill = '#ff9933'
         } else {
             fill = metOffice[warning.warningLevel]
@@ -81,15 +84,9 @@ export default class WarningMap extends Component {
 
     render() {
         let geolocation = []
-        if(this.props.currentLocation) {
-            geolocation.push(<Marker defaultPosition={this.props.currentLocation.location} />)
+        if (this.props.currentLocation) {
+            geolocation.push(<Marker defaultPosition={this.props.currentLocation.location}/>)
         }
-
-        let zoom = null
-        if(this.map) {
-           zoom = this.map.getZoom()
-        }
-
 
         return (
             <GoogleMapLoader
@@ -106,9 +103,7 @@ export default class WarningMap extends Component {
      {
         this.props.warnings.map((warning, index) => {
 
-            const showPolygon = warning.polygons  && ( (warning.type === 'flood' && zoom > 13 ) || warning.type !== 'flood' )
-
-            if(showPolygon) {
+            if(warning.polygons) {
                return warning.polygons.map((polygon, index) => {
                  return <Polygon paths={polygon}
                                  options={this.polygonOptionsFor(warning)}
@@ -116,6 +111,7 @@ export default class WarningMap extends Component {
                          />
                })
             }
+
         }).concat(geolocation)
      }
     </GoogleMap>
@@ -127,7 +123,7 @@ export default class WarningMap extends Component {
 
 WarningMap.propTypes = {
     mapOptions: PropTypes.object.isRequired,
-    warnings: PropTypes.array.isRequired,
+    warnings: PropTypes.array.isRequired,       // Warnings to render (not all warnings, or the warnings in the list)
     onMapChange: PropTypes.func.isRequired,
     currentLocation: PropTypes.object
 }

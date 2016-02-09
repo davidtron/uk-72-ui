@@ -79,7 +79,7 @@ const _ccw = function (path) {
     return isCCW
 }
 
-var _geometryToGoogleMaps = function (geojsonGeometry) {
+const _geometryToGoogleMaps = function (geojsonGeometry) {
     let path, ll
     let exteriorDirection
     let interiorDirection

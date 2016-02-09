@@ -11,16 +11,21 @@ import FloodWarning from './flood-warning'
 import PowerWarning from './power-warning'
 import Geocoding from './geocoding'
 import geolib from 'geolib'
-import overlap from 'poly-overlap'
-
+import WarningFilter from './warning-filter'
+import values from 'object.values'
 
 export default class WarningBox extends Component {
     constructor(props) {
         super(props)
 
+        if (!Object.values) {
+            values.shim();
+        }
+
         this.state = {
-            warnings: [],      // warnings rendered on the list and on the map
             allWarnings: {},   // in memory cache of all warnings received
+            warningsList: [],      // warnings rendered on the list
+            warningsOnMap: [],     // warnings rendered on the map
             mapOptions: {
                 zoom: 9,
                 center: {lat: 51.6799019, lng: -0.4235076}
@@ -31,6 +36,8 @@ export default class WarningBox extends Component {
         this.weatherWarning = new WeatherWarning()
         this.floodWarning = new FloodWarning()
         this.powerWarning = new PowerWarning()
+
+        this.filterWarnings = new WarningFilter()
 
         this.handlePostcodeSubmit = this.handlePostcodeSubmit.bind(this)
         this.selectLocation = this.selectLocation.bind(this)
@@ -76,11 +83,13 @@ export default class WarningBox extends Component {
     }
 
     moveMap(warning) {
+        // If polygon is not yet loaded, retrieve it
         if (!warning.polygons && warning.polygonsFunction) {
-            this.loadPolygonDataUsingPromise(warning, warning.key)
+            this.loadPolygonDataUsingPromise(warning)
         }
 
         this.setState({
+            currentWarningKey: warning.key,
             mapOptions: {
                 setBounds: warning.bounds
             }
@@ -110,42 +119,34 @@ export default class WarningBox extends Component {
 
     handleMapChange(currentBoundsAndZoom) {
         const allWarningsObj = this.state.allWarnings
+        const selectedWarningKey = this.state.currentWarningKey
+
         if (allWarningsObj) {
 
-            const currentWarnings = []
+            const warningsInList = Object.values(allWarningsObj).filter(this.filterWarnings.selectVisibleWarnings(currentBoundsAndZoom))
+            const warningsOnMap = warningsInList.filter(this.filterWarnings.selectWarningsForMap(currentBoundsAndZoom, selectedWarningKey))
 
-            Object.keys(allWarningsObj).forEach(warningKey => {
-                const warning = allWarningsObj[warningKey]
-
-                if (this.doBoundingBoxesIntersect(currentBoundsAndZoom, warning)) {
-
-                    // Invoke the promise if weve not yet got the polygon data.
-                    if (!warning.polygons && warning.polygonsFunction) {
-                        //console.log('invoking polygon promise for ' + warning)
-
-                        // Some warnings we dont want at a high zoom
-                        // such as flood polygons where there's a lot of data
-                        // if we end up doing this for other polygons, then extract a method to filter the promises to invoke.
-
-                        if(warning.type === 'flood' && currentBoundsAndZoom.zoom < 10) {
-                            //console.log('Not retrieving flood data at zoom level ' + currentBoundsAndZoom.zoom)
-                        } else {
-                            this.loadPolygonDataUsingPromise(warning, warningKey);
-                        }
-                    }
-                    currentWarnings.push(warning)
+            // Load any polygons required for map that are not yet loaded.
+            warningsOnMap.forEach(warning => {
+                if (!warning.polygons && warning.polygonsFunction) {
+                    this.loadPolygonDataUsingPromise(warning);
                 }
-
             })
 
             this.setState({
-                warnings: currentWarnings,
-                mapOptions: {setBounds: null}
+                warningsList: warningsInList,
+                warningsOnMap : warningsOnMap,
+                mapOptions: {setBounds: null}     // Clear this so the map doesnt try to move
             })
         }
     }
 
-    loadPolygonDataUsingPromise(warning, warningKey) {
+    loadPolygonDataUsingPromise(warning) {
+        const  warningKey = warning.key
+        // TODO - check we arent repeatedly calling load for same polygon
+        console.log('load polygon for ' + warningKey)
+
+
         warning.polygonsFunction.call()
             .then(polygonData => {
                 // Update allWarnings with received data
@@ -156,7 +157,7 @@ export default class WarningBox extends Component {
                 const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
 
                 // Find index of updated item in current warnings
-                const indexOf = this.state.warnings.findIndex((element, index, array) => {
+                const indexOf = this.state.warningsOnMap.findIndex((element, index, array) => {
                     if (element.key === warningKey) {
                         return true
                     }
@@ -164,76 +165,15 @@ export default class WarningBox extends Component {
                 })
 
                 // Splice in the new value to the array
-                const oldWarnings = this.state.warnings
+                const oldWarnings = this.state.warningsOnMap
                 const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
 
                 this.setState({
                     allWarnings: updatedAllWarnings,
-                    warnings: updatedCurrentWarnings
+                    warningsOnMap: updatedCurrentWarnings
                 })
             })
             .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
-    }
-
-    boundingBoxesIntersect(currentBounds, warning) {
-        // Check if bounding boxes intercept
-        const warningBounds = warning.bounds
-
-        const warningTopLeftX = warningBounds.sw.lng
-        const warningTopLeftY = warningBounds.ne.lat
-        const warningBottomRightX = warningBounds.ne.lng
-        const warningBottomRightY = warningBounds.sw.lat
-
-        const currentTopLeftX = currentBounds.sw.lng
-        const currentTopLeftY = currentBounds.ne.lat
-        const currentBottomRightX = currentBounds.ne.lng
-        const currentBottomRightY = currentBounds.sw.lat
-
-        const rabx = Math.abs(currentTopLeftX + currentBottomRightX - warningTopLeftX - warningBottomRightX)
-        const raby = Math.abs(currentTopLeftY + currentBottomRightY - warningTopLeftY - warningBottomRightY)
-
-        //rAx + rBx
-        const raxPrbx = currentBottomRightX - currentTopLeftX + warningBottomRightX - warningTopLeftX
-
-        //rAy + rBy
-        const rayPrby = currentTopLeftY - currentBottomRightY + warningTopLeftY - warningBottomRightY
-
-        if(rabx <= raxPrbx && raby <= rayPrby) {
-            return true
-        }
-        return false
-    }
-
-
-
-    doBoundingBoxesIntersect(currentBoundsAndZoom, warning) {
-        const currentBounds = currentBoundsAndZoom.bounds
-
-        // TODO - put something in to choose polygon or bounding box based on type?
-
-        if(this.boundingBoxesIntersect(currentBounds, warning)) {
-
-            const considerPolygon = warning.polygons && ( (warning.type === 'flood' && currentBoundsAndZoom.zoom < 6) || warning.type !== 'flood' )
-
-            // Check if the polygons really intersect
-
-            if(considerPolygon) {
-                //console.log('checking polygon ' + warning.type + ' ' + currentBoundsAndZoom.zoom  )
-
-                const viewPortCoords = [[currentBounds.ne.lat, currentBounds.ne.lng], [currentBounds.ne.lat, currentBounds.sw.lng], [currentBounds.sw.lat,currentBounds.sw.lng], [currentBounds.sw.lat, currentBounds.ne.lng]]
-
-                // we want to return true for the first one we hit, so cant use for each
-                for(let i=0; i < warning.polygons.length; i++) {
-                    const polygon = warning.polygons[i].map( (p) => {return [p.lat, p.lng]})
-                    const polygonsOverlap = overlap.overlap(polygon, viewPortCoords)
-                    if(polygonsOverlap) return true
-                }
-            } else {
-                return true
-            }
-        }
-        return false
-
     }
 
     render() {
@@ -243,11 +183,11 @@ export default class WarningBox extends Component {
             <div className='comment-box row'>
                 <div className='col-md-4 warning-list'>
                     <PostcodeForm onPostcodeSubmit={this.handlePostcodeSubmit}/>
-                    <WarningList warnings={this.state.warnings} onWarningClick={this.moveMap}/>
+                    <WarningList warnings={this.state.warningsList} onWarningClick={this.moveMap}/>
                 </div>
                 <div className='col-md-8 warning-map'>
                     <WarningMap ref={map => {this.map = map}} mapOptions={this.state.mapOptions}
-                                warnings={this.state.warnings} onMapChange={this.handleMapChange} currentLocation={this.state.currentLocation}/>
+                                warnings={this.state.warningsOnMap} onMapChange={this.handleMapChange} currentLocation={this.state.currentLocation} currentWarningKey={this.state.currentWarningKey}/>
                 </div>
             </div>
         )
