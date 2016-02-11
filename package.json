@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/davidtron/uk-72-ui#readme",
   "dependencies": {
-    "bootstrap.native": "^0.9.7-npmfix.1",
     "can-use-dom": "^0.1.0",
     "geolib": "^2.0.18",
     "lodash.throttle": "^3.0.4",
@@ -39,6 +38,7 @@
     "whatwg-fetch": "^0.10.0"
   },
   "devDependencies": {
+    "bootstrap.native": "^0.9.7-npmfix.1",
     "babel-preset-es2015": "^6.1.18",
     "babel-preset-react": "^6.1.18",
     "babel-preset-stage-0": "^6.3.13",

@@ -111,7 +111,7 @@ export default class FloodWarning {
                         warningImpact: flood.severity,
                         warningLevel: FloodWarning.warningMapping(flood.severityLevel),
                         warningLikelihood: flood.severity,
-                        url: {href: 'http://apps.environment-agency.gov.uk/flood/31618.aspx', name: 'Environment Agency'},
+                        url: {href: '../prepared/#flood-slider', name: 'Flood advice'},
                         phone: ['Floodline: 0345 988 1188']
                     }
 

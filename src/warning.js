@@ -111,27 +111,29 @@ export default class Warning extends Component {
         let warning = this.props.warning
 
         const warningDetail =
-            <div className="warning-details" >
-                <div>
-                    {warning.detail}
-                </div>
-                <div>
+            <div className="warning-details" onClick={this.showDetail} >
+                <p><strong>Where: </strong>{warning.area}</p>
+                <p>{warning.detail}</p>
+                <p><strong>When: </strong>
                     {this.generateTimeFragment('From', warning.validFrom)} {this.generateTimeFragment('to', warning.validTo)}
-                </div>
-                <div>
-                    { warning.phone.map((phone => <div>{phone}</div>))}
-                    <a target="_blank" href={warning.url.href}>{warning.url.name}</a>
-                </div>
+                </p>
+                <p>
+                    { warning.phone.map((phone => <strong>{phone}</strong>))}
+                </p>
+                <p>
+                    <a href={warning.url.href}>{warning.url.name}</a>
+                </p>
             </div>
 
 
         return (
             <div className={warningMap[warning.warningLevel]} >
-                <div className="warning-row">
+                <div onClick={this.showDetail} className="warning-row">
                     {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
-                        <a href="#" onClick={this.showDetail}>{warning.text}</a>
-                        <div onClick={() => {this.props.onWarningClick(warning)}}>{warning.area}</div>
+                        <div >{warning.text}</div>
+                        <div className="show-more" onClick={() => {this.props.onWarningClick(warning)}}>I</div>
+                        <div className="warning-area">{warning.area}</div>
                     </div>
 
                 </div>
