@@ -110,6 +110,13 @@ export default class Warning extends Component {
         // Map the warning type and severity to correct image/icon combo
         let warning = this.props.warning
 
+        const findTarget = function(url) {
+            if(url.href.substr(0,4) === 'http') {
+                return '_bank'
+            }
+            return '_self'
+        }
+
         const warningDetail =
             <div className="warning-details" onClick={this.showDetail} >
                 <p><strong>Where: </strong>{warning.area}</p>
@@ -121,7 +128,7 @@ export default class Warning extends Component {
                     { warning.phone.map((phone => <strong>{phone}</strong>))}
                 </p>
                 <p>
-                    <a href={warning.url.href}>{warning.url.name}</a>
+                    { warning.url.map((url => <div><a target={findTarget(url)} href={url.href}>{url.name}</a></div>))}
                 </p>
             </div>
 

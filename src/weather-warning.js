@@ -68,6 +68,18 @@ export default class WeatherWarning {
         return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase()
     }
 
+    static getAdvice(weatherWarning) {
+        const type = weatherWarning.weather.toUpperCase()
+        if(type.indexOf('SNOW') !== -1 || type.indexOf('ICE') !== -1) {
+            return {href: '../prepared/#winterweather-slider', name: 'Winter Weather advice'}
+        }
+
+        if(type.indexOf('WIND') !== -1) {
+            return {href: '../prepared/#storm-slider', name: 'Storm advice'}
+        }
+        return null
+    }
+
     getWarning(location) {
         console.log('Get weather warnings for ', location)
 
@@ -103,7 +115,7 @@ export default class WeatherWarning {
                         warningLevel: WeatherWarning.warningMapping(weatherWarning.warningLevel),
                         warningLikelihood: weatherWarning.warningLikelihood,
                         key: weatherWarning.id,
-                        url: {href: 'http://www.metoffice.gov.uk/public/weather/warnings/#?tab=map&map=Warnings', name: 'Met Office'},
+                        url: [WeatherWarning.getAdvice(weatherWarning), {href: 'http://www.metoffice.gov.uk/public/weather/warnings/#?tab=map&map=Warnings', name: 'Met Office'}],
                         phone: []
                     }
 
