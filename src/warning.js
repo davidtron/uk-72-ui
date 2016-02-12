@@ -135,12 +135,12 @@ export default class Warning extends Component {
 
         return (
             <div className={warningMap[warning.warningLevel]} >
-                <div onClick={this.showDetail} className="warning-row">
+                <div className="warning-row">
                     {this.generateWarningIcon(warning)}
                     <div className="warning-stuff">
-                        <div >{warning.text}</div>
+                        <div onClick={this.showDetail}>{warning.text}</div>
                         <div className="show-more" onClick={() => {this.props.onWarningClick(warning)}}>I</div>
-                        <div className="warning-area">{warning.area}</div>
+                        <div className="warning-area" onClick={this.showDetail}>{warning.area}</div>
                     </div>
 
                 </div>
