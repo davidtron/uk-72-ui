@@ -23,7 +23,7 @@ export default class WeatherWarning {
                         throw new Error('Could not process weather results:\n' + JSON.stringify(weather))
                     }
                     console.log('fetched weather from API', weather)
-                    lscache.set('weather', weather, 240) // cache for 4 hours
+                    lscache.set('weather', weather, 2400) // cache for 4 hours
                     return weather
                 })
         }
