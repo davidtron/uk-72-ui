@@ -32,6 +32,8 @@ export default class WarningBox extends Component {
             }
         }
 
+        this.polygonsThatAreLoading = {}
+
         this.geocoding = new Geocoding()
         this.weatherWarning = new WeatherWarning()
         this.floodWarning = new FloodWarning()
@@ -145,37 +147,45 @@ export default class WarningBox extends Component {
 
     loadPolygonDataUsingPromise(warning) {
         const  warningKey = warning.key
-        // TODO - check we arent repeatedly calling load for same polygon
-        console.log('load polygon for ' + warningKey)
 
+        if(! this.polygonsThatAreLoading[warningKey]) {
+            console.log('load polygon for ' + warningKey)
+            this.polygonsThatAreLoading[warningKey] = true;
+            warning.polygonsFunction.call()
+                .then(polygonData => {
+                    // Update allWarnings with received data
+                    console.log('received polygon data for ' + warningKey)
 
-        warning.polygonsFunction.call()
-            .then(polygonData => {
-                // Update allWarnings with received data
-                console.log('received polygon data for ' + warningKey)
+                    warning.polygons = polygonData
 
-                warning.polygons = polygonData
+                    const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
 
-                const updatedAllWarnings = update(this.state.allWarnings, {[warningKey]: {$set: warning}})
+                    // Find index of updated item in current warnings
+                    const indexOf = this.state.warningsOnMap.findIndex((element, index, array) => {
+                        if (element.key === warningKey) {
+                            return true
+                        }
+                        return false
+                    })
 
-                // Find index of updated item in current warnings
-                const indexOf = this.state.warningsOnMap.findIndex((element, index, array) => {
-                    if (element.key === warningKey) {
-                        return true
-                    }
-                    return false
+                    // Splice in the new value to the array
+                    const oldWarnings = this.state.warningsOnMap
+                    const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
+
+                    this.setState({
+                        allWarnings: updatedAllWarnings,
+                        warningsOnMap: updatedCurrentWarnings
+                    })
+
+                    this.polygonsThatAreLoading[warningKey] = null;
                 })
-
-                // Splice in the new value to the array
-                const oldWarnings = this.state.warningsOnMap
-                const updatedCurrentWarnings = update(oldWarnings, {$splice: [[indexOf, 1, warning]]})
-
-                this.setState({
-                    allWarnings: updatedAllWarnings,
-                    warningsOnMap: updatedCurrentWarnings
+                .catch(err => {
+                    console.log('Could not process polygon for warning ' + warningKey, err)
+                    this.polygonsThatAreLoading[warningKey] = null;
                 })
-            })
-            .catch(err => console.log('Could not process polygon for warning ' + warningKey, err))
+        } else {
+            console.log('already requested load polygon for ' + warningKey)
+        }
     }
 
     render() {
