@@ -20,7 +20,7 @@ const WarningList = (props) => {
         </div>
     } else {
         return (
-            <div>{warnings}</div>
+            <div className='warnings'>{warnings}</div>
         )
     }
 

@@ -128,6 +128,10 @@
     padding-right: 5px;
 }
 
+.warnings {
+     /*overriden in website*/
+}
+
 .show-more {
     float: right;
     font-family: 'sf72-icons';
