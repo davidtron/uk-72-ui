@@ -105,7 +105,7 @@ export default class PowerWarning {
                                 validTo: outage.restorationTime,
                                 warningLevel: 'amber',
                                 phone: this.findContactDetails(setOfWarnings.network),
-                                url: [{href: '../prepared/#powercut-slider', name: 'Get Advice'}, {href: setOfWarnings.uri, name: setOfWarnings.network}],
+                                url: [{href: '../prepared/at-home/#powercut-slider', name: 'Get Advice'}, {href: setOfWarnings.uri, name: setOfWarnings.network}],
                                 key: outage.latitude +'_' +outage.longitude
                             }
 

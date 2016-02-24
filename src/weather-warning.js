@@ -71,11 +71,11 @@ export default class WeatherWarning {
     static getAdvice(weatherWarning) {
         const type = weatherWarning.weather.toUpperCase()
         if(type.indexOf('SNOW') !== -1 || type.indexOf('ICE') !== -1) {
-            return {href: '../prepared/#winterweather-slider', name: 'Winter Weather advice'}
+            return {href: '../prepared/weather/#winterweather-slider', name: 'Winter Weather advice'}
         }
 
         if(type.indexOf('WIND') !== -1) {
-            return {href: '../prepared/#storm-slider', name: 'Storm advice'}
+            return {href: '../prepared/weather/#storm-slider', name: 'Storm advice'}
         }
         return null
     }
