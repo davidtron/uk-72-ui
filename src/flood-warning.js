@@ -90,7 +90,18 @@ export default class FloodWarning {
                     const midpoint = geolib.getCenter([southWestCorner, northEastCorner])
 
                     const fetchPolygonData = function () {
-                        return FloodWarning.fetchFloodArea(flood.floodArea.polygon)
+                        let floodUri = flood.floodArea.polygon;
+                        if(floodUri.indexOf('https://') ==-1) {
+                            if(floodUri.indexOf('http://') ==0) {
+                                // Convert from http to https
+                                floodUri = 'https://' + floodUri.substring(6, floodUri.length)
+                            } else {
+                                // Doesnt start with either https or http
+                                throw new Error('Unknown uri for flood polygon '+ floodUri)
+                            }
+                        }
+
+                        return FloodWarning.fetchFloodArea(floodUri)
                     }
 
                     const warning = {
