@@ -34,7 +34,7 @@ export default class FloodWarning {
             return new Promise((resolve, reject) => resolve(floodWarnings))
         } else {
             // Retrieve all floods for the UK ( the API does support location and distance but choose to cache all for now
-            return fetch('http://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat=' + location.location.lat + '&long=' + location.location.lng + '&dist=1000')
+            return fetch('https://environment.data.gov.uk/flood-monitoring/id/floods?min-severity=3&lat=' + location.location.lat + '&long=' + location.location.lng + '&dist=1000')
                 .then(response => response.json())
                 .then(floods => {
                     if (floods.errorType) {
