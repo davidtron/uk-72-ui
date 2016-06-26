@@ -94,7 +94,7 @@ export default class FloodWarning {
                         if(floodUri.indexOf('https://') ==-1) {
                             if(floodUri.indexOf('http://') ==0) {
                                 // Convert from http to https
-                                floodUri = 'https://' + floodUri.substring(6, floodUri.length)
+                                floodUri = 'https://' + floodUri.substring(7, floodUri.length)
                             } else {
                                 // Doesnt start with either https or http
                                 throw new Error('Unknown uri for flood polygon '+ floodUri)
